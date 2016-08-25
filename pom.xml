@@ -89,7 +89,7 @@
     </distributionManagement>
     
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/releases/somegoodfolder</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Exchange/PLUGIN/fluxActivity</connection>
     </scm>
     
     <build>
