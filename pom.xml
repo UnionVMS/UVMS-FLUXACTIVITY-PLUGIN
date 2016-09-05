@@ -4,7 +4,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
     <artifactId>fluxActivity</artifactId>
-    <version>0.5.5-SNAPSHOT</version>
+    <version>0.5.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
     
@@ -73,9 +73,7 @@
     
     
     </dependencies>
-    
-    
-	
+
     <distributionManagement>
         <repository>
             <id>digit-releases</id>
@@ -141,7 +139,7 @@
                     <providerImplementations>
                         <svn>javasvn</svn>
                     </providerImplementations>
-                    <tagBase>https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/tags/Exchange/PLUGIN/mdr</tagBase>
+                    <tagBase>https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/tags/Exchange/PLUGIN/fluxActivity</tagBase>
                     <tagNameFormat>${project.artifactId}-${project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
