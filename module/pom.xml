@@ -7,7 +7,7 @@
     <packaging>ear</packaging>
 
     <parent>
-        <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
+        <groupId>eu.europa.ec.fisheries.uvms.plugins.activity</groupId>
         <artifactId>fluxActivity</artifactId>
         <version>0.5.4-SNAPSHOT</version>
     </parent>
