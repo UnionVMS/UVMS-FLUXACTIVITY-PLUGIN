@@ -4,7 +4,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins.activity</groupId>
     <artifactId>fluxActivity</artifactId>
-    <version>0.5.4-SNAPSHOT</version>
+    <version>0.5.4</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
     
@@ -88,7 +88,7 @@
     </distributionManagement>
     
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Exchange/PLUGIN/fluxActivity</connection>
+        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/tags/Exchange/PLUGIN/fluxActivity/fluxActivity-0.5.4-SNAPSHOT</connection>
     </scm>
     
     <build>
