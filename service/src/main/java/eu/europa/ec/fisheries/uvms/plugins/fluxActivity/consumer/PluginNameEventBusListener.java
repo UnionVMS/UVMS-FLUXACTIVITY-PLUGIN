@@ -87,10 +87,10 @@ public class PluginNameEventBusListener implements MessageListener {
                     PingRequest pingRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, PingRequest.class);
                     responseMessage = ExchangePluginResponseMapper.mapToPingResponse(startup.isIsEnabled(), startup.isIsEnabled());
                     break;
-               /* case SET_FLUX_RESPONSE:
+                case SET_FLUX_RESPONSE:
                     SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
                     AcknowledgeTypeType response = service.sendFLUXFAResponse(fluxFAResponseRequest.getResponse());
-                    break;*/
+                    break;
                 default:
                     LOG.error("Not supported method");
                     break;
