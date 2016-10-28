@@ -6,8 +6,10 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
+
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  *
@@ -16,24 +18,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class PluginDataHolder {
 
     public final static String PLUGIN_PROPERTIES_KEY = "fluxActivity.properties";
-    public final static String PROPERTIES_KEY = "settings.properties";
-    public final static String CAPABILITIES_KEY = "capabilities.properties";
+    public final static String PROPERTIES_KEY        = "settings.properties";
+    public final static String CAPABILITIES_KEY      = "capabilities.properties";
 
     private Properties fluxActivityApplicaitonProperties;
     private Properties fluxActivityProperties;
     private Properties fluxActivityCapabilities;
 
-    private final ConcurrentHashMap<String, String> settings = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, String> capabilities = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> settings = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> capabilities = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
 
-    public ConcurrentHashMap<String, String> getSettings() {
+    public ConcurrentMap<String, String> getSettings() {
         return settings;
     }
-    public ConcurrentHashMap<String, String> getCapabilities() {
+    public ConcurrentMap<String, String> getCapabilities() {
         return capabilities;
     }
-    public ConcurrentHashMap<String, SetReportMovementType> getCachedMovement() {
+    public ConcurrentMap<String, SetReportMovementType> getCachedMovement() {
         return cachedMovement;
     }
     public Properties getPluginApplicaitonProperties() {
