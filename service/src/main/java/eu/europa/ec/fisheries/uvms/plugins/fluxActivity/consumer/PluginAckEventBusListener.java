@@ -52,46 +52,55 @@ public class PluginAckEventBusListener implements MessageListener {
             if (request == null) {
                 PluginFault fault = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginFault.class);
                 handlePluginFault(fault);
-            } else {
-                String responseMessage = null;
-                switch (request.getMethod()) {
-                    case REGISTER_SERVICE:
-                        RegisterServiceResponse registerResponse = JAXBMarshaller.unmarshallTextMessage(textMessage, RegisterServiceResponse.class);
-                        startupService.setWaitingForResponse(Boolean.FALSE);
-                        switch (registerResponse.getAck().getType()) {
-                            case OK:
-                                LOG.info("Register OK");
-                                startupService.setIsRegistered(Boolean.TRUE);
-                                break;
-                            case NOK:
-                                LOG.info("Register NOK: " + registerResponse.getAck().getMessage());
-                                startupService.setIsRegistered(Boolean.FALSE);
-                                break;
-                            default:
-                                LOG.error("[ Type not supperted: ]" + request.getMethod());
-                        }
-                        break;
-                    case UNREGISTER_SERVICE:
-                        UnregisterServiceResponse unregisterResponse = JAXBMarshaller.unmarshallTextMessage(textMessage, UnregisterServiceResponse.class);
-                        switch (unregisterResponse.getAck().getType()) {
-                            case OK:
-                                LOG.info("Unregister OK");
-                                break;
-                            case NOK:
-                                LOG.info("Unregister NOK");
-                                break;
-                            default:
-                                LOG.error("[ Ack type not supported ] ");
-                                break;
-                        }
-                        break;
-                    default:
-                        LOG.error("Not supported method");
-                        break;
-                }
+                return;
             }
+
+            switch (request.getMethod()) {
+                case REGISTER_SERVICE:
+                    RegisterServiceResponse registerResponse = JAXBMarshaller.unmarshallTextMessage(textMessage, RegisterServiceResponse.class);
+                    startupService.setWaitingForResponse(Boolean.FALSE);
+                    setRegistrationResponse(request, registerResponse);
+                    break;
+                case UNREGISTER_SERVICE:
+                    UnregisterServiceResponse unregisterResponse = JAXBMarshaller.unmarshallTextMessage(textMessage, UnregisterServiceResponse.class);
+                    setUnRegistrationResponse(unregisterResponse);
+                    break;
+                default:
+                    LOG.error("Not supported method");
+                    break;
+            }
+
         } catch (ExchangeModelMarshallException | NullPointerException e) {
-            LOG.error("[ Error when receiving message in fluxActivity ]", e);
+            LOG.error("[ Error when receiving message in fishingActivity ]", e);
+        }
+    }
+
+    private void setUnRegistrationResponse(UnregisterServiceResponse unregisterResponse) {
+        switch (unregisterResponse.getAck().getType()) {
+            case OK:
+                LOG.info("Unregister OK");
+                break;
+            case NOK:
+                LOG.info("Unregister NOK");
+                break;
+            default:
+                LOG.error("[ Ack type not supported ] ");
+                break;
+        }
+    }
+
+    private void setRegistrationResponse(ExchangeRegistryBaseRequest request, RegisterServiceResponse registerResponse) {
+        switch (registerResponse.getAck().getType()) {
+            case OK:
+                LOG.info("Register OK");
+                startupService.setIsRegistered(Boolean.TRUE);
+                break;
+            case NOK:
+                LOG.info("Register NOK: " + registerResponse.getAck().getMessage());
+                startupService.setIsRegistered(Boolean.FALSE);
+                break;
+            default:
+                LOG.error("[ Type not supperted: ]" + request.getMethod());
         }
     }
 
@@ -103,6 +112,7 @@ public class PluginAckEventBusListener implements MessageListener {
         try {
             return JAXBMarshaller.unmarshallTextMessage(textMessage, ExchangeRegistryBaseRequest.class);
         } catch (ExchangeModelMarshallException e) {
+            LOG.error("Error trying to consume BaseRequest",e);
             return null;
         }
     }

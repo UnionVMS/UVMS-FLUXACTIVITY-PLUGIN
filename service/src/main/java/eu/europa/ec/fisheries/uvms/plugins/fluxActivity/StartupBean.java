@@ -1,18 +1,6 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.jms.JMSException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
@@ -21,29 +9,32 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.ServiceMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginMessageProducer;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.ExchangeService;
-import java.util.Map;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FileHandlerBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.*;
+import javax.jms.JMSException;
+import java.util.Map;
 
 @Singleton
 @Startup
-@DependsOn({"PluginMessageProducer", "FileHandlerBean", "PluginAckEventBusListener"})
+@DependsOn({"PluginMessageProducer", "FileHandlerBean"})
 public class StartupBean extends PluginDataHolder {
 
-    final static Logger LOG = LoggerFactory.getLogger(StartupBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StartupBean.class);
 
-    private final static int MAX_NUMBER_OF_TRIES = 10;
+    private static final int MAX_NUMBER_OF_TRIES = 10;
     private boolean isRegistered = false;
     private boolean isEnabled = false;
     private boolean waitingForResponse = false;
     private int numberOfTriesExecuted = 0;
-    private String REGISTER_CLASS_NAME = "";
+    private String registeredClassName = "";
 
     @EJB
     PluginMessageProducer messageProducer;
-
-    @EJB
-    ExchangeService service;
 
     @EJB
     FileHandlerBean fileHandler;
@@ -56,12 +47,12 @@ public class StartupBean extends PluginDataHolder {
     public void startup() {
 
         //This must be loaded first!!! Not doing that will end in dire problems later on!
-        super.setPluginApplicaitonProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PLUGIN_PROPERTIES));
-        REGISTER_CLASS_NAME = getPLuginApplicationProperty("application.groupid");
+        super.setPluginApplicaitonProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PLUGIN_PROPERTIES_KEY));
+        registeredClassName = getPLuginApplicationProperty("application.groupid");
 
         //Theese can be loaded in any order
-        super.setPluginProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PROPERTIES));
-        super.setPluginCapabilities(fileHandler.getPropertiesFromFile(PluginDataHolder.CAPABILITIES));
+        super.setPluginProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PROPERTIES_KEY));
+        super.setPluginCapabilities(fileHandler.getPropertiesFromFile(PluginDataHolder.CAPABILITIES_KEY));
 
         ServiceMapper.mapToMapFromProperties(super.getSettings(), super.getPluginProperties(), getRegisterClassName());
         ServiceMapper.mapToMapFromProperties(super.getCapabilities(), super.getPluginCapabilities(), null);
@@ -78,7 +69,7 @@ public class StartupBean extends PluginDataHolder {
 
         register();
 
-        LOG.debug("Settings updated in plugin {}", REGISTER_CLASS_NAME);
+        LOG.debug("Settings updated in plugin {}", registeredClassName);
         for (Map.Entry<String, String> entry : super.getSettings().entrySet()) {
             LOG.debug("Setting: KEY: {} , VALUE: {}", entry.getKey(), entry.getValue());
         }
@@ -105,9 +96,9 @@ public class StartupBean extends PluginDataHolder {
         setWaitingForResponse(true);
         try {
             String registerServiceRequest = ExchangeModuleRequestMapper.createRegisterServiceRequest(serviceType, capabilities, settingList);
-            String correlationId = messageProducer.sendEventBusMessage(registerServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
+            messageProducer.sendEventBusMessage(registerServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (JMSException | ExchangeModelMarshallException e) {
-            LOG.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
+            LOG.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
             setWaitingForResponse(false);
         }
 
@@ -117,9 +108,9 @@ public class StartupBean extends PluginDataHolder {
         LOG.info("Unregistering from Exchange Module");
         try {
             String unregisterServiceRequest = ExchangeModuleRequestMapper.createUnregisterServiceRequest(serviceType);
-            String correlationId = messageProducer.sendEventBusMessage(unregisterServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
+            messageProducer.sendEventBusMessage(unregisterServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (JMSException | ExchangeModelMarshallException e) {
-            LOG.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
+            LOG.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
         }
     }
 
@@ -127,7 +118,7 @@ public class StartupBean extends PluginDataHolder {
         try {
             return (String) super.getPluginApplicaitonProperties().get(key);
         } catch (Exception e) {
-            LOG.error("Failed to getSetting for key: " + key, getRegisterClassName());
+            LOG.error("Failed to getSetting for key: " + key, getRegisterClassName(),e);
             return null;
         }
     }
@@ -141,7 +132,7 @@ public class StartupBean extends PluginDataHolder {
     }
 
     public String getRegisterClassName() {
-        return REGISTER_CLASS_NAME;
+        return registeredClassName;
     }
 
     public String getApplicaionName() {
@@ -150,10 +141,10 @@ public class StartupBean extends PluginDataHolder {
 
     public String getSetting(String key) {
         try {
-            LOG.debug("Trying to get setting {} ", REGISTER_CLASS_NAME + "." + key);
-            return super.getSettings().get(REGISTER_CLASS_NAME + "." + key);
+            LOG.debug("Trying to get setting {} ", registeredClassName + "." + key);
+            return super.getSettings().get(registeredClassName + "." + key);
         } catch (Exception e) {
-            LOG.error("Failed to getSetting for key: " + key, REGISTER_CLASS_NAME);
+            LOG.error("Failed to getSetting for key: " + key, registeredClassName,e);
             return null;
         }
     }
@@ -161,23 +152,18 @@ public class StartupBean extends PluginDataHolder {
     public boolean isWaitingForResponse() {
         return waitingForResponse;
     }
-
     public void setWaitingForResponse(boolean waitingForResponse) {
         this.waitingForResponse = waitingForResponse;
     }
-
     public boolean isIsRegistered() {
         return isRegistered;
     }
-
     public void setIsRegistered(boolean isRegistered) {
         this.isRegistered = isRegistered;
     }
-
     public boolean isIsEnabled() {
         return isEnabled;
     }
-
     public void setIsEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }

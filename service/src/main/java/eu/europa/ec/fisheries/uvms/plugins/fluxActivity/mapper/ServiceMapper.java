@@ -6,26 +6,25 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityTypeType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingType;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+import eu.europa.ec.fisheries.schema.exchange.service.v1.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentMap;
+
 /**
- *
  * @author jojoha
  */
 public class ServiceMapper {
 
-    final static Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
+    private ServiceMapper() {
+        super();
+    }
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
 
     public static ServiceType getServiceType(String serviceClassName, String fluxActivityDisplayName, String description, PluginType fluxActivityType, String responseMessageName) {
 
@@ -46,7 +45,7 @@ public class ServiceMapper {
         return serviceType;
     }
 
-    public static SettingListType getSettingsListTypeFromMap(ConcurrentHashMap<String, String> settings) {
+    public static SettingListType getSettingsListTypeFromMap(ConcurrentMap<String, String> settings) {
         SettingListType settingListType = new SettingListType();
         Iterator<Map.Entry<String, String>> itr = settings.entrySet().iterator();
         while (itr.hasNext()) {
@@ -59,7 +58,7 @@ public class ServiceMapper {
         return settingListType;
     }
 
-    public static CapabilityListType getCapabilitiesListTypeFromMap(ConcurrentHashMap<String, String> capabilities) {
+    public static CapabilityListType getCapabilitiesListTypeFromMap(ConcurrentMap<String, String> capabilities) {
         CapabilityListType capabilityListType = new CapabilityListType();
         Iterator<Map.Entry<String, String>> itr = capabilities.entrySet().iterator();
         while (itr.hasNext()) {
@@ -69,7 +68,7 @@ public class ServiceMapper {
             try {
                 setting.setType(CapabilityTypeType.valueOf(tmp.getKey()));
             } catch (Exception e) {
-                LOG.error("Error when parsing to Enum type from String KEY: {}", tmp.getKey());
+                LOG.error("Error when parsing to Enum type from String KEY: {}", tmp.getKey(), e);
             }
 
             setting.setValue(tmp.getValue());
@@ -78,18 +77,19 @@ public class ServiceMapper {
         return capabilityListType;
     }
 
-    public static void mapToMapFromProperties(ConcurrentHashMap<String, String> map, Properties props, String registerClassName) {
-        for (Object col : props.keySet()) {
-            if (col.getClass().isAssignableFrom(String.class)) {
-                String keyString = (String) col;
+    public static void mapToMapFromProperties(ConcurrentMap<String, String> map, Properties props, String registerClassName) {
+
+        for (Map.Entry entrySet : props.entrySet()) {
+            Object key = entrySet.getKey();
+            if (key.getClass().isAssignableFrom(String.class)) {
+                String keyString = (String) key;
                 if (registerClassName != null) {
                     keyString = registerClassName.concat("." + keyString);
                 }
-                String valueString = (String) props.get(col);
+                String valueString = (String) entrySet.getValue();
                 map.put(keyString, valueString);
             }
         }
-
     }
 
 }

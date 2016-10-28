@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class PluginDataHolder {
 
-    public final static String PLUGIN_PROPERTIES = "fluxActivity.properties";
-    public final static String PROPERTIES = "settings.properties";
-    public final static String CAPABILITIES = "capabilities.properties";
+    public final static String PLUGIN_PROPERTIES_KEY = "fluxActivity.properties";
+    public final static String PROPERTIES_KEY = "settings.properties";
+    public final static String CAPABILITIES_KEY = "capabilities.properties";
 
     private Properties fluxActivityApplicaitonProperties;
     private Properties fluxActivityProperties;
@@ -30,35 +30,27 @@ public abstract class PluginDataHolder {
     public ConcurrentHashMap<String, String> getSettings() {
         return settings;
     }
-
     public ConcurrentHashMap<String, String> getCapabilities() {
         return capabilities;
     }
-
     public ConcurrentHashMap<String, SetReportMovementType> getCachedMovement() {
         return cachedMovement;
     }
-
     public Properties getPluginApplicaitonProperties() {
         return fluxActivityApplicaitonProperties;
     }
-
     public void setPluginApplicaitonProperties(Properties fluxActivityApplicaitonProperties) {
         this.fluxActivityApplicaitonProperties = fluxActivityApplicaitonProperties;
     }
-
     public Properties getPluginProperties() {
         return fluxActivityProperties;
     }
-
     public void setPluginProperties(Properties fluxActivityProperties) {
         this.fluxActivityProperties = fluxActivityProperties;
     }
-
     public Properties getPluginCapabilities() {
         return fluxActivityCapabilities;
     }
-
     public void setPluginCapabilities(Properties fluxActivityCapabilities) {
         this.fluxActivityCapabilities = fluxActivityCapabilities;
     }
