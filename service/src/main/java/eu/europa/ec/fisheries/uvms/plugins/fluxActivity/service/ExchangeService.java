@@ -26,7 +26,7 @@ import javax.jms.JMSException;
 @Stateless
 public class ExchangeService {
 
-    final static Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
 
     @EJB
     StartupBean startupBean;
@@ -41,12 +41,10 @@ public class ExchangeService {
            LOG.info("exchange request created :"+text);
             String messageId = producer.sendModuleMessage(text, ModuleQueue.EXCHANGE);
            LOG.info("send to exchange module :"+messageId);
-           // startupBean.getCachedMovement().put(messageId, reportType);
         } catch (ExchangeModelMarshallException e) {
-            LOG.error("Couldn't map movement to setreportmovementtype");
-        } catch (JMSException e) {
-            LOG.error("couldn't send movement");
-           // startupBean.getCachedMovement().put(UUID.randomUUID().toString(), reportType);
+            LOG.error("Couldn't map movement to setreportmovementtype",e);
+        } catch (JMSException e1) {
+            LOG.error("couldn't send movement",e1);
         }
     }
 }

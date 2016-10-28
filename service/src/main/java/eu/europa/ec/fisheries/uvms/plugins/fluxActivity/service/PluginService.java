@@ -35,10 +35,10 @@ public class PluginService {
     @EJB
     FluxMessageProducer producer;
 
-    final static Logger LOG = LoggerFactory.getLogger(PluginService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 
     /**
-     * TODO implement
+     * Sets the report
      *
      * @param report
      * @return
@@ -64,13 +64,13 @@ public class PluginService {
             producer.sendModuleMessage(fluxFAResponse);
 
         } catch (JMSException e) {
-            e.printStackTrace();
+            LOG.error("Error while trying to send message to flux",e);
         }
         // send message to FLUX
         return AcknowledgeTypeType.OK;
     }
     /**
-     * TODO implement
+     * Sets the command
      *
      * @param command
      * @return
@@ -104,7 +104,7 @@ public class PluginService {
             }
             return AcknowledgeTypeType.OK;
         } catch (Exception e) {
-            LOG.error("Failed to set config in {}", startupBean.getRegisterClassName());
+            LOG.error("Failed to set config in {}", startupBean.getRegisterClassName(),e);
             return AcknowledgeTypeType.NOK;
         }
 
@@ -122,7 +122,7 @@ public class PluginService {
             return AcknowledgeTypeType.OK;
         } catch (Exception e) {
             startupBean.setIsEnabled(Boolean.FALSE);
-            LOG.error("Failed to start {}", startupBean.getRegisterClassName());
+            LOG.error("Failed to start {}", startupBean.getRegisterClassName(),e);
             return AcknowledgeTypeType.NOK;
         }
 
@@ -140,7 +140,7 @@ public class PluginService {
             return AcknowledgeTypeType.OK;
         } catch (Exception e) {
             startupBean.setIsEnabled(Boolean.TRUE);
-            LOG.error("Failed to stop {}", startupBean.getRegisterClassName());
+            LOG.error("Failed to stop {}", startupBean.getRegisterClassName(),e);
             return AcknowledgeTypeType.NOK;
         }
     }
