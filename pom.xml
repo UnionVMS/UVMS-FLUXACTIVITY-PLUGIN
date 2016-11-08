@@ -113,9 +113,11 @@
             <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-    
+
     <scm>
-        <connection>scm:svn:https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/branches/dev/Modules/Exchange/PLUGIN/fluxActivity</connection>
+        <connection>scm:git:https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-FLUXACTIVITY-PLUGIN.git</connection>
+        <developerConnection>scm:git:https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-FLUXACTIVITY-PLUGIN.git</developerConnection>
+        <url>https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/</url>
     </scm>
     
     <build>
@@ -163,10 +165,6 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <providerImplementations>
-                        <svn>javasvn</svn>
-                    </providerImplementations>
-                    <tagBase>https://webgate.ec.europa.eu/CITnet/svn/UNIONVMS/tags/Exchange/PLUGIN/fluxActivity</tagBase>
                     <tagNameFormat>${project.artifactId}-${project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
