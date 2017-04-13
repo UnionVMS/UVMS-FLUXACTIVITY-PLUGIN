@@ -1,7 +1,7 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
 
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxPluginConstants;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.ExchangeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,10 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 
-@MessageDriven(mappedName = FluxPluginConstants.FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME,  activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = FluxPluginConstants.DESTINATION_TYPE_QUEUE),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = FluxPluginConstants.FLUX_MESSAGE_IN_REMOTE_QUEUE),
-        @ActivationConfigProperty(propertyName = "connectionFactoryLookup", propertyValue = FluxPluginConstants.FLUX_CONNECTION_FACTORY)
+@MessageDriven(mappedName = FluxConnectionConstants.FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME,  activationConfig = {
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = FluxConnectionConstants.DESTINATION_TYPE_QUEUE),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = FluxConnectionConstants.FLUX_MESSAGE_IN_REMOTE_QUEUE),
+        @ActivationConfigProperty(propertyName = "connectionFactoryLookup", propertyValue = FluxConnectionConstants.FLUX_CONNECTION_FACTORY)
 })
 public class FluxMessageConsumer implements MessageListener {
 

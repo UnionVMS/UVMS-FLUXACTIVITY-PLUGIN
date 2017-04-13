@@ -15,8 +15,6 @@ public class FluxConnectionConstants {
     private FluxConnectionConstants(){}
 
     public static final String DESTINATION_TYPE_QUEUE                = "javax.jms.Queue";
-    public static final String FLUX_MDR_REMOTE_MESSAGE_IN_QUEUE      = "java:/jms/queue/mdr2out";
-    public static final String FLUX_MDR_REMOTE_MESSAGE_IN_QUEUE_NAME = "mdr2out";
     public static final String FLUX_CONNECTION_FACTORY               = "java:/FluxFactory";
 
 	// ConnectionFactory details
@@ -24,31 +22,27 @@ public class FluxConnectionConstants {
     public static final String INITIAL_CONTEXT_FACTORY   = "org.jboss.naming.remote.client.InitialContextFactory";
 
     // Queue details
-  //  public static final String JMS_QUEUE_BRIDGE = "java:/jms/queue/bridge";
-    public static final String JMS_QUEUE_BRIDGE = "java:/jms/queue/FAQuery";
+    public static final String JMS_QUEUE_BRIDGE = "java:/jms/queue/bridge";
 
     // Message details
-    public static final int NUMBER_OF_MESSAGES  = 10;
     public static final String CONNECTOR_ID     = "CONNECTOR_ID";
     public static final String CONNECTOR_ID_VAL = "JMS MDM Business AP1";
 
     public static final String FLUX_ENV_AD      = "AD";
     public static final String FLUX_ENV_AD_VAL  = "XEU";
-
     public static final String FLUX_ENV_DF      = "DF";
-  //  public static final String FLUX_ENV_DF_VAL  = "urn:un:unece:uncefact:fisheries:FLUX:MDM:EU:2";
+    public static final String FLUX_ENV_TODT    = "TODT";
+
     public static final String FLUX_ENV_DF_VAL  = "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2";
 
-    public static final String FLUX_ENV_TO      = "TO";
-    public static final String FLUX_ENV_TO_VAL  = "60";
-
-    public static final String FLUX_ENV_TODT    = "TODT";
-    public static final String FLUX_ENV_TODT_VAL= "20";
-
     // Business procedure signature
-    public static final String BUSINESS_PROCEDURE_PREFIX = "BP";
+
     public static final String BUSINESS_UUID             = "BUSINESS_UUID";
     public static final String FLUX_ENV_AR = "AR";
     public static final String FLUX_ENV_AR_VAL = "true";
+
+    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
+    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
+
 
 }

@@ -148,7 +148,6 @@ public class FluxMessageProducer {
         fluxMsg.setText(textMessage);
         fluxMsg.setStringProperty(CONNECTOR_ID, CONNECTOR_ID_VAL);
         fluxMsg.setStringProperty(FLUX_ENV_AD, FLUX_ENV_AD_VAL);
-        //fluxMsg.setStringProperty(FLUX_ENV_TO, FLUX_ENV_TO_VAL);
         fluxMsg.setStringProperty(FLUX_ENV_DF, FLUX_ENV_DF_VAL);
         fluxMsg.setStringProperty(BUSINESS_UUID, createBusinessUUID());
         fluxMsg.setStringProperty(FLUX_ENV_TODT, createStringDate());
@@ -166,9 +165,6 @@ public class FluxMessageProducer {
     private void loadRemoteQueueProperties() throws NamingException, JMSException {
         Properties contextProps = new Properties();
         final FluxParameters fluxParameters = startUpBean.getFluxParameters();
-        LOG.debug("FLUX providerURL:"+fluxParameters.getProviderUrl());
-        LOG.debug("FLUX SECURITY_PRINCIPAL:"+fluxParameters.getProviderId());
-        LOG.debug("FLUX SECURITY_CREDENTIALS:"+fluxParameters.getProviderPwd());
         LOG.debug("JMS Queue:"+JMS_QUEUE_BRIDGE);
         contextProps.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
         contextProps.put(Context.PROVIDER_URL, fluxParameters.getProviderUrl());
@@ -230,7 +226,7 @@ public class FluxMessageProducer {
         while (propertyNames.hasMoreElements()) {
             i++;
             propName = (String) propertyNames.nextElement();
-            System.out.println(i + ". " + propName + " : " + fluxMsg.getStringProperty(propName));
+            LOG.debug(i + ". " + propName + " : " + fluxMsg.getStringProperty(propName));
         }
     }
 
