@@ -10,7 +10,7 @@ details. You should have received a copy of the GNU General Public License along
  */package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
 /**
- * Created by kovian on 26/10/2016.
+ * Created by sanera
  */
 public class FluxParameters {
 

@@ -62,17 +62,6 @@ public class PluginService {
     }
 
 
-  /*  public AcknowledgeTypeType sendFLUXFAResponse(String fluxFAResponse) {
-        try {
-            LOG.info("inside sendFLUXFAResponse. requesting flux producer to send message to flux" );
-            producer.sendModuleMessage(fluxFAResponse);
-
-        } catch (JMSException e) {
-            LOG.error("Error while trying to send message to flux",e);
-        }
-        // send message to FLUX
-        return AcknowledgeTypeType.OK;
-    }*/
     /**
      * Sets the command
      *
