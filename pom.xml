@@ -76,6 +76,7 @@
         </dependency>
 
 
+        <!-- JMS communication with FLUX -->
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-jms-client-bom</artifactId>
