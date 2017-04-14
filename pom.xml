@@ -77,30 +77,6 @@
         </dependency>
 
 
-        <!-- JMS communication with FLUX -->
-   <!--      <dependency>
-            <groupId>org.wildfly</groupId>
-            <artifactId>wildfly-jms-client-bom</artifactId>
-            <version>${wildfly.jms.client.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.resource</groupId>
-            <artifactId>jboss-connector-api_1.6_spec</artifactId>
-            <version>${jboss.connector.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons.lang.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-        </dependency>-->
-
-    
 	  <dependency>
                 <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
                 <artifactId>activity-model-fa</artifactId>
