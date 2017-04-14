@@ -17,7 +17,6 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PollType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +34,6 @@ public class PluginService {
 
     @EJB
     StartupBean startupBean;
-
-    @EJB
-    FluxMessageProducer producer;
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 

@@ -18,7 +18,7 @@ import javax.jms.TextMessage;
 @Stateless
 @LocalBean
 @Slf4j
-public class TestMessageProducer extends  AbstractRemoteProducer  {
+public class MessageProducer extends  AbstractRemoteProducer  {
 
     @EJB
     private StartupBean startUpBean;

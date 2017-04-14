@@ -15,9 +15,8 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.message.MessageException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.MessageProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginMessageProducer;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.TestMessageProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.PluginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +53,8 @@ public class PluginNameEventBusListener implements MessageListener {
     @EJB
     StartupBean startup;
 
-    @EJB
-    FluxMessageProducer fluxMsgProducer;
-
-    @EJB
-    TestMessageProducer testMessageProducer;
+      @EJB
+    MessageProducer fluxMessageProducer;
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
@@ -113,11 +109,10 @@ public class PluginNameEventBusListener implements MessageListener {
                 case SET_FLUX_RESPONSE:
                     LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
                    SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                   // fluxMsgProducer.sendMessageToFluxBridge(fluxFAResponseRequest.getResponse());
-                       try {
-                        testMessageProducer.sendModuleMessage(fluxFAResponseRequest.getResponse(),null);
+                   try {
+                        fluxMessageProducer.sendModuleMessage(fluxFAResponseRequest.getResponse(),null);
                         LOG.info("--FLUXFAResponse message sent successfully to FLUX");
-                    } catch (MessageException e) {
+                   } catch (MessageException e) {
                         LOG.error("Not able to send message to FLUX");
                     }
                     break;
