@@ -35,7 +35,7 @@
         </dependency>
 
         <!-- JMS communication with FLUX -->
-        <dependency>
+    <!--    <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-jms-client-bom</artifactId>
             <version>${wildfly.jms.client.version}</version>
@@ -58,7 +58,7 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>${commons.lang.version}</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
     
     <build>

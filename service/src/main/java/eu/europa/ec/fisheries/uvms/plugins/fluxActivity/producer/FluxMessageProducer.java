@@ -55,7 +55,7 @@ public class FluxMessageProducer {
     private Queue bridgeQueue = null;
     Session session = null;
 
-    private static final Logger LOG = LoggerFactory.getLogger(PluginMessageProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FluxMessageProducer.class);
 
     /**
      * Sends a message from this Module to the flux Bridge queue.
