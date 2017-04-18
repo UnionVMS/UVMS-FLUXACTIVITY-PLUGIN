@@ -5,21 +5,24 @@
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service;
 
-import eu.europa.ec.fisheries.schema.exchange.common.v1.*;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeTypeType;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandType;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandTypeType;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.KeyValueType;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.ReportType;
+import eu.europa.ec.fisheries.schema.exchange.common.v1.ReportTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PollType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.jms.JMSException;
 
 /**
  *
@@ -31,9 +34,6 @@ public class PluginService {
 
     @EJB
     StartupBean startupBean;
-
-    @EJB
-    FluxMessageProducer producer;
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 
@@ -58,17 +58,6 @@ public class PluginService {
     }
 
 
-    public AcknowledgeTypeType sendFLUXFAResponse(String fluxFAResponse) {
-        try {
-            LOG.info("inside sendFLUXFAResponse. requesting flux producer to send message to flux" );
-            producer.sendModuleMessage(fluxFAResponse);
-
-        } catch (JMSException e) {
-            LOG.error("Error while trying to send message to flux",e);
-        }
-        // send message to FLUX
-        return AcknowledgeTypeType.OK;
-    }
     /**
      * Sets the command
      *

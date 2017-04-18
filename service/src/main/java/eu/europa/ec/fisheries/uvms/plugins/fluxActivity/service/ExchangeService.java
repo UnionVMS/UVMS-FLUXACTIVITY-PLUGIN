@@ -7,7 +7,6 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service;
 
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ModuleQueue;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginMessageProducer;
 import org.slf4j.Logger;
@@ -29,22 +28,19 @@ public class ExchangeService {
     private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
 
     @EJB
-    StartupBean startupBean;
-
-    @EJB
     PluginMessageProducer producer;
 
     public void sendFLUXFAReportMessageReportToExchange(String fluxFAReportMessage) {
        try {
-           LOG.info("inside ExchangeService. sendFLUXFAReportMessageReportToExchange");
+           LOG.info("Prepare FLUXFAReportMessageRequest to send to exchange");
             String text = ExchangeModuleRequestMapper.createFluxFAReportRequest(fluxFAReportMessage,"flux");
-           LOG.info("exchange request created :"+text);
+           LOG.info("Exchange request created :"+text);
             String messageId = producer.sendModuleMessage(text, ModuleQueue.EXCHANGE);
-           LOG.info("send to exchange module :"+messageId);
+           LOG.info("Message sent to exchange module :"+messageId);
         } catch (ExchangeModelMarshallException e) {
-            LOG.error("Couldn't map movement to setreportmovementtype",e);
+            LOG.error("Couldn't create FluxFAReportRequest for Exchange",e);
         } catch (JMSException e1) {
-            LOG.error("couldn't send movement",e1);
+            LOG.error("couldn't send FluxFAReportRequest to exchange",e1);
         }
     }
 }

@@ -2,19 +2,30 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
 import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeTypeType;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.*;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PingRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetCommandRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetConfigRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAResponseRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetReportRequest;
 import eu.europa.ec.fisheries.uvms.exchange.model.constant.ExchangeModelConstants;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangePluginResponseMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.message.MessageException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.MessageProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginMessageProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.PluginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.*;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -42,6 +53,8 @@ public class PluginNameEventBusListener implements MessageListener {
     @EJB
     StartupBean startup;
 
+      @EJB
+    MessageProducer fluxMessageProducer;
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
@@ -92,10 +105,16 @@ public class PluginNameEventBusListener implements MessageListener {
                     LOG.info(pingRequest.toString());
                     responseMessage = ExchangePluginResponseMapper.mapToPingResponse(startup.isIsEnabled(), startup.isIsEnabled());
                     break;
+
                 case SET_FLUX_RESPONSE:
-                    SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                    AcknowledgeTypeType response = service.sendFLUXFAResponse(fluxFAResponseRequest.getResponse());
-                    LOG.info(response.toString());
+                    LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
+                   SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
+                   try {
+                        fluxMessageProducer.sendModuleMessage(fluxFAResponseRequest.getResponse(),null);
+                        LOG.info("--FLUXFAResponse message sent successfully to FLUX");
+                   } catch (MessageException e) {
+                        LOG.error("Not able to send message to FLUX");
+                    }
                     break;
                 default:
                     LOG.error("Not supported method");
