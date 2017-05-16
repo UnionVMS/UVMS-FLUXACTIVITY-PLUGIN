@@ -41,8 +41,10 @@ public class FluxConnectionConstants {
     public static final String FLUX_ENV_AR = "AR";
     public static final String FLUX_ENV_AR_VAL = "true";
 
-    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
-    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
+   /// public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
+    //public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
 
 
+     public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAPlugin";
+     public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAPlugin";
 }
