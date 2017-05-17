@@ -10,6 +10,8 @@ details. You should have received a copy of the GNU General Public License along
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -22,40 +24,104 @@ import java.io.IOException;
 import java.io.StringReader;
 
 /**
+ * This class Will use SAX Parser to parse input XML document and extracts UUID value of FLUXReportDocument
  * Created by sanera on 16/05/2017.
  */
 public class SAXParserForFaFLUXMessge extends DefaultHandler {
+    final static Logger LOG = LoggerFactory.getLogger(SAXParserForFaFLUXMessge.class);
+
+    private static final String FLUX_REPORT_DOCUMENT_TAG ="rsm:FLUXReportDocument";
+    private static final String ID_TAG ="ram:ID";
+    private static final String UUID_ATTRIBUTE ="UUID";
+
     private String uuid;
     private boolean isFLUXReportDocumentStart;
     private boolean isIDStart;
     private boolean isUUIDForFluxReportDocument;
-    private String uuidValue;
+    private String uuidValue; // store FLUXReportDocument UUID value inside this
 
 
-    public SAXParserForFaFLUXMessge(){
-
-    }
-
+    /**
+     * This method parse input document using SAX parser
+     * @param message
+     * @throws SAXException
+     */
     public void parseDocument(String message) throws SAXException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser = null;
         try {
             parser = factory.newSAXParser();
-            //   parser.parse("testSaxFAReport.xml", this);
-
-          //  parser.parse("s011a_REP010_TRA.xml", this);
-            StringReader sr = new StringReader(message);
+             StringReader sr = new StringReader(message);
             InputSource source = new InputSource(sr);
             parser.parse(source,this);
-            //    parser.parse("Activity_RQ_RS1_Test.xml", this);
+
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            LOG.error("Parse exception while trying to parse incoming message from flux.",e);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("IOException while trying to parse incoming message from flux.",e);
+        }
+
+    }
+
+
+    @Override
+    public void startElement(String s, String s1, String elementName, Attributes attributes) throws SAXException {
+
+        // We need to extract UUID value for FLUXReportDocument. So, Mark when the tag is found.
+        if(FLUX_REPORT_DOCUMENT_TAG.equals(elementName)){
+            isFLUXReportDocumentStart =true;
+            LOG.debug("FLUXReportDocument tag found.");
+        }
+
+        if(ID_TAG.equals(elementName) && isFLUXReportDocumentStart){
+            isIDStart =true;
+            LOG.debug("Found ID tag inside FLUXReportDocument tag");
+            String value =attributes.getValue("schemeID");
+            if(UUID_ATTRIBUTE.equals(value)){
+                LOG.debug("Found UUID schemeID inside ID tag");
+                isUUIDForFluxReportDocument =true;
+            }
+        }
+
+    }
+
+    @Override
+
+    public void endElement(String s, String s1, String element) throws SAXException {
+
+        if(FLUX_REPORT_DOCUMENT_TAG.equals(element)){
+            isFLUXReportDocumentStart =false;
+            LOG.debug("FLUXReportDocument tag Ended.");
+        }
+
+        if(ID_TAG.equals(element)){
+            isIDStart =false;
+            isUUIDForFluxReportDocument =false;
+            LOG.debug("ID tag Ended.");
+        }
+    }
+
+    @Override
+    public void characters(char[] ac, int i, int j) throws SAXException {
+
+        String  tmpValue = new String(ac, i, j);
+
+        // Extract UUID value and stop parsing of further document?
+        if(isUUIDForFluxReportDocument){
+            uuidValue = tmpValue;
+            throw new UUIDSAXException("Found the required value . so, stop parsing entire document");
         }
 
 
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
 
@@ -89,60 +155,5 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
 
     public void setUuidValue(String uuidValue) {
         this.uuidValue = uuidValue;
-    }
-
-
-    @Override
-    public void startElement(String s, String s1, String elementName, Attributes attributes) throws SAXException {
-
-        if("rsm:FLUXReportDocument".equals(elementName)){
-            isFLUXReportDocumentStart =true;
-        }
-
-        if("ram:ID".equals(elementName) && isFLUXReportDocumentStart){
-            isIDStart =true;
-            String value =attributes.getValue("schemeID");
-            if("UUID".equals(value)){
-                isUUIDForFluxReportDocument =true;
-            }
-        }
-        System.out.println("startElement :"+elementName);
-    }
-
-    @Override
-
-    public void endElement(String s, String s1, String element) throws SAXException {
-        System.out.println("endElement :"+element);
-
-        if("rsm:FLUXReportDocument".equals(element)){
-            isFLUXReportDocumentStart =false;
-        }
-
-        if("ram:ID".equals(element)){
-            isIDStart =false;
-            isUUIDForFluxReportDocument =false;
-        }
-    }
-
-    @Override
-    public void characters(char[] ac, int i, int j) throws SAXException {
-
-        String  tmpValue = new String(ac, i, j);
-
-        if(isUUIDForFluxReportDocument){
-            uuidValue = tmpValue;
-            System.out.println("UUID value found:"+tmpValue);
-            throw new UUIDSAXException("Found the required value . so, stop parsing entire document");
-        }
-
-
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 }

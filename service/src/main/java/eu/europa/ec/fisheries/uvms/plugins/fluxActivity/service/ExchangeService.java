@@ -58,7 +58,12 @@ public class ExchangeService {
        }
     }
 
-
+    /**
+     * Create object with all necessary properties required to communicate with exchange
+     * @param textMessage
+     * @return
+     * @throws JMSException
+     */
      public ExchangeMessageProperties createExchangeMessagePropertiesForFluxFAReportRequest(TextMessage textMessage) throws JMSException {
         ExchangeMessageProperties exchangeMessageProperties = new ExchangeMessageProperties();
         exchangeMessageProperties.setUsername(exchangeUsername);
@@ -66,24 +71,23 @@ public class ExchangeService {
         exchangeMessageProperties.setPluginType(PluginType.FLUX);
         exchangeMessageProperties.setDFValue(extractStringPropertyFromJMSTextMessage(textMessage,DF));
         exchangeMessageProperties.setSenderReceiver(extractStringPropertyFromJMSTextMessage(textMessage,FR));
-         exchangeMessageProperties.setMessageGuid(extractMessageGuidFromInputXML(textMessage.getText()));
+        exchangeMessageProperties.setMessageGuid(extractMessageGuidFromInputXML(textMessage.getText()));
 
         return exchangeMessageProperties;
     }
 
-
+    //Extract UUID value from FLUXReportDocument as messageGuid
     public String extractMessageGuidFromInputXML(String message){
         String messageGuid=null;
         SAXParserForFaFLUXMessge saxParserForFaFLUXMessge = new SAXParserForFaFLUXMessge();
         try {
             saxParserForFaFLUXMessge.parseDocument(message);
         } catch (SAXException e) {
-            // e.printStackTrace();
-            if(e instanceof UUIDSAXException)
-                LOG.debug("************************************************");
+            // below message would be thrown once value is found.
+          if(e instanceof UUIDSAXException)
+            LOG.debug("************************************************");
             messageGuid =saxParserForFaFLUXMessge.getUuidValue();
-            LOG.debug("UUID found:"+saxParserForFaFLUXMessge.getUuidValue());
-
+            LOG.debug("UUID found:"+messageGuid);
             LOG.debug("************************************************");
         }
         return messageGuid;

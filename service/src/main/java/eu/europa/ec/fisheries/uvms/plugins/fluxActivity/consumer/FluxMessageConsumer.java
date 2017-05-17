@@ -48,7 +48,6 @@ public class FluxMessageConsumer implements MessageListener {
 
         TextMessage textMessage = (TextMessage) inMessage;
 
-
         try {
              if(textMessage ==null || textMessage.getText() ==null)
                  throw new Exception("Message received in ERS Plugin is null.");

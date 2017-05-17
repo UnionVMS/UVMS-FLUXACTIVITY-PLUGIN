@@ -13,6 +13,6 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants;
 
 public enum DataSourceQueue {
 
-    INTERNAL, MOVEMENT, CONFIG, ASSET, MOBILE_TERMINAL, EXCHANGE, USER, AUDIT, ACTIVITY, MDR_EVENT;
+    EXCHANGE;
 
 }

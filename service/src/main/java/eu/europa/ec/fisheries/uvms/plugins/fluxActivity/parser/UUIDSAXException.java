@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser;
 import org.xml.sax.SAXException;
 
 /**
+ * Custom Exception to be thrown once desired UUID value is found so as to save parsing of entire document.
  * Created by sanera on 16/05/2017.
  */
 public class UUIDSAXException extends SAXException {
