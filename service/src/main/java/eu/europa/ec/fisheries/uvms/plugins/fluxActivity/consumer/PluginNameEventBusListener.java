@@ -8,7 +8,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.message.MessageException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.MessageProducer;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,9 @@ public class PluginNameEventBusListener implements MessageListener {
     @EJB
     StartupBean startup;
 
-      @EJB
-    MessageProducer fluxMessageProducer;
+    @EJB
+    FluxMessageProducer fluxMessageProducer;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
