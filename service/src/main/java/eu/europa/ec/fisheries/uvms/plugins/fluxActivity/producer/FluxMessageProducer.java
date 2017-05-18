@@ -10,8 +10,11 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAResponseRequest;
 import eu.europa.ec.fisheries.uvms.message.AbstractRemoteProducer;
 import eu.europa.ec.fisheries.uvms.message.ConnectionProperties;
+import eu.europa.ec.fisheries.uvms.message.MessageException;
+import eu.europa.ec.fisheries.uvms.message.TextMessageProperties;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.FluxParameters;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.jms.Destination;
 import javax.jms.TextMessage;
 
 /**
@@ -32,6 +36,14 @@ public class FluxMessageProducer extends  AbstractRemoteProducer  {
 
     @EJB
     private StartupBean startUpBean;
+    private String adVal;
+    private String dfVal;
+    private String frVal;
+
+    @Override
+    public String sendModuleMessage(String text, Destination replyTo) throws MessageException{
+        return super.sendModuleMessage(text,replyTo);
+    }
 
     @Override
     public void sendModuleResponseMessage(TextMessage message, String text, String moduleName) {
@@ -53,5 +65,50 @@ public class FluxMessageProducer extends  AbstractRemoteProducer  {
         connectionProperties.setPassword(fluxParameters.getProviderPwd());
         LOG.debug("ConnectionProperties------>"+connectionProperties);
         return connectionProperties;
+    }
+
+    @Override
+    public TextMessageProperties getTextMessageProperties() {
+
+        TextMessageProperties textMessageProperties = new TextMessageProperties();
+        textMessageProperties.setAdVal(this.adVal);
+        textMessageProperties.setArVal(FLUX_ENV_AR_VAL);
+        textMessageProperties.setFrVal(this.frVal);
+        textMessageProperties.setDfVal(this.dfVal);
+        textMessageProperties.setBusinessUUId(createBusinessUUID());
+        textMessageProperties.setCreationDate(createStringDate());
+
+        return textMessageProperties;
+    }
+
+    public void readJMSPropertiesFromExchangeResponse(SetFLUXFAResponseRequest responseRequest){
+        this.adVal =responseRequest.getDestination();
+        this.dfVal=responseRequest.getFluxDataFlow();
+        this.frVal = responseRequest.getSenderOrReceiver();
+
+    }
+
+    public String getAdVal() {
+        return adVal;
+    }
+
+    public void setAdVal(String adVal) {
+        this.adVal = adVal;
+    }
+
+    public String getDfVal() {
+        return dfVal;
+    }
+
+    public void setDfVal(String dfVal) {
+        this.dfVal = dfVal;
+    }
+
+    public String getFrVal() {
+        return frVal;
+    }
+
+    public void setFrVal(String frVal) {
+        this.frVal = frVal;
     }
 }

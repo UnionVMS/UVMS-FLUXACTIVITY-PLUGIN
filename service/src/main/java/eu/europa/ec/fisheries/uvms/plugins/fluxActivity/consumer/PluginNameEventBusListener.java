@@ -58,14 +58,16 @@ public class PluginNameEventBusListener implements MessageListener {
 
                 case SET_FLUX_RESPONSE:
                     LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
-                   SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                   responseMessage =fluxFAResponseRequest.getResponse();
+                    SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
+                    responseMessage =fluxFAResponseRequest.getResponse();
+                    fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest);
                     LOG.debug("--FLUXFAResponse message received in the Plugin is:"+responseMessage);
                     break;
                 default:
                     LOG.error("Not supported method");
                     break;
             }
+
 
             fluxMessageProducer.sendModuleMessage(responseMessage,null);
             LOG.info("--FLUXFAResponse message sent successfully to FLUX");

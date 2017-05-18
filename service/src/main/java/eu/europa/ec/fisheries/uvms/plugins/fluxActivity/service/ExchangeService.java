@@ -76,6 +76,7 @@ public class ExchangeService {
         return exchangeMessageProperties;
     }
 
+
     //Extract UUID value from FLUXReportDocument as messageGuid
     public String extractMessageGuidFromInputXML(String message){
         String messageGuid=null;
