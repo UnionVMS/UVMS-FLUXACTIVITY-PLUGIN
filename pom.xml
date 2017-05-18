@@ -19,7 +19,6 @@
         <logback.version>1.1.2</logback.version>
         <logback.core.version>1.1.2</logback.core.version>
         <audit.model.version>2.0.3</audit.model.version>
-      <!--  <exchange.model.version>2.0.8</exchange.model.version>-->
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
 		<activity.model.fa>0.5.5</activity.model.fa>
@@ -28,7 +27,6 @@
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
         <uvms.commons.version>2.0.18-SNAPSHOT</uvms.commons.version>
         <exchange.model.version>3.0.5-SNAPSHOT</exchange.model.version>
-      <!--  <uvms.config.version>3.0.4</uvms.config.version>-->
 
     </properties>
    
