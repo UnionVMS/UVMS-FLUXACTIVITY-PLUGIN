@@ -22,9 +22,6 @@ public class FluxConnectionConstants {
     public static final String JMS_QUEUE_BRIDGE = "java:/jms/queue/bridge";
 
 
-
-
-
     // Business procedure signature
 
 

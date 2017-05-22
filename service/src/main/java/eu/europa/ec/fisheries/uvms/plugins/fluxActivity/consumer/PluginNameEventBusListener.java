@@ -60,7 +60,7 @@ public class PluginNameEventBusListener implements MessageListener {
                     LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
                     SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
                     responseMessage =fluxFAResponseRequest.getResponse();
-                    fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest);
+                    fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
                     LOG.debug("--FLUXFAResponse message received in the Plugin is:"+responseMessage);
                     break;
                 default:

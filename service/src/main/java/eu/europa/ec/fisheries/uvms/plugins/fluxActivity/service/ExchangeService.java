@@ -47,7 +47,6 @@ public class ExchangeService {
             String text = ExchangeModuleRequestMapper.createFluxFAReportRequest(fluxFAReportMessage,prop.getUsername()
                     ,prop.getDFValue(),prop.getDate(),prop.getMessageGuid(),prop.getPluginType(),prop.getSenderReceiver());
            LOG.info("Exchange request created :"+text);
-         ///   String messageId = producer.sendModuleMessage(text, ModuleQueue.EXCHANGE);
            String messageId = producer.sendModuleMessage(text, DataSourceQueue.EXCHANGE);
            LOG.info("Message sent to exchange module :"+messageId);
         } catch (ExchangeModelMarshallException e) {

@@ -39,7 +39,6 @@ public class StartupBean extends PluginDataHolder {
     private String registeredClassName = "";
 
     @EJB
-  //  PluginMessageProducer messageProducer;
     PluginMessageProducer messageProducer;
 
     @EJB
