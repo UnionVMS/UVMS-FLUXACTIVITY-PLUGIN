@@ -31,9 +31,9 @@
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
+            <classifier>date</classifier>
             <type>jar</type>
         </dependency>
-
     </dependencies>
     
     <build>

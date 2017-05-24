@@ -7,20 +7,20 @@ the License, or any later version. The IFDM Suite is distributed in the hope tha
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
-*/
-package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
+ */
+package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser;
 
-
-import eu.europa.ec.fisheries.uvms.message.MessageException;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.DataSourceQueue;
+import org.xml.sax.SAXException;
 
 /**
- * Created by kovian on 02/12/2016.
+ * Custom Exception to be thrown once desired UUID value is found so as to save parsing of entire document.
+ * Created by sanera on 16/05/2017.
  */
-public interface MessageProducer {
-
-    String sendRulesModuleMessage(String text) throws MessageException;
-
-    String sendModuleMessage(String text, DataSourceQueue queue) throws MessageException;
-
+public class UUIDSAXException extends SAXException {
+    public UUIDSAXException(){
+        super();
+    }
+    public UUIDSAXException(String s) {
+        super(s);
+    }
 }

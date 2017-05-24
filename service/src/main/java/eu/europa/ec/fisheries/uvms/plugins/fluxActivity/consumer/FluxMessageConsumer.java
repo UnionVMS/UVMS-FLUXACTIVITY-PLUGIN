@@ -44,14 +44,17 @@ public class FluxMessageConsumer implements MessageListener {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
 
-        LOG.info("------Received FAReportMessage in ERS Activity plugin from FLUX--------");
+        LOG.info("------Received Message in ERS Activity plugin from FLUX--------");
 
         TextMessage textMessage = (TextMessage) inMessage;
 
         try {
+             if(textMessage ==null || textMessage.getText() ==null)
+                 throw new Exception("Message received in ERS Plugin is null.");
 
-            LOG.debug("Received FAReportMessage :"+textMessage.getText());
-            exchange.sendFLUXFAReportMessageReportToExchange(textMessage.getText());
+            String message =textMessage.getText();
+            LOG.debug("Received FAReportMessage :"+message);
+            exchange.sendFLUXFAReportMessageReportToExchange(textMessage.getText(),exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage));
             LOG.info("message sent successfully to exchange module");
 
 
@@ -59,6 +62,10 @@ public class FluxMessageConsumer implements MessageListener {
             LOG.error("Error while trying to send Flux FAReport message to exchange",e);
         }
     }
+
+
+
+
 
 
 }
