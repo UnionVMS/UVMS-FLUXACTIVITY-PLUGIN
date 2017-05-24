@@ -8,9 +8,11 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.message.MessageException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
@@ -69,7 +71,7 @@ public class PluginNameEventBusListener implements MessageListener {
             }
 
 
-            fluxMessageProducer.sendModuleMessage(responseMessage,null);
+            fluxMessageProducer.sendModuleMessage(extractCleanXMLMessage(responseMessage),null);
             LOG.info("--FLUXFAResponse message sent successfully to FLUX");
 
         }catch (MessageException e) {
@@ -78,5 +80,22 @@ public class PluginNameEventBusListener implements MessageListener {
         catch (ExchangeModelMarshallException | NullPointerException e) {
             LOG.error("[ Error when receiving message in fluxActivity " + startup.getRegisterClassName() + " ]", e);
         }
+    }
+
+    private String extractCleanXMLMessage(String fluxFAResponse){
+        String cleanXMLMessage=null;
+
+        try {
+            FLUXFAReportMessage fluxfaReportMessage = eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.JAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXFAReportMessage.class);
+
+            cleanXMLMessage =JAXBMarshaller.marshallJaxBObjectToString(fluxfaReportMessage);
+
+        } catch (PluginException e) {
+            e.printStackTrace();
+        } catch (ExchangeModelMarshallException e) {
+            e.printStackTrace();
+        }
+
+        return cleanXMLMessage;
     }
 }
