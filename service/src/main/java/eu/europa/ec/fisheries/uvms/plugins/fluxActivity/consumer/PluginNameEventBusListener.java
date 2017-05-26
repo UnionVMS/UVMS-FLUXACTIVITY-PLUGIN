@@ -9,10 +9,12 @@ import eu.europa.ec.fisheries.uvms.message.MessageException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginException;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.PluginJAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
@@ -59,11 +61,18 @@ public class PluginNameEventBusListener implements MessageListener {
             switch (request.getMethod()) {
 
                 case SET_FLUX_RESPONSE:
-                    LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
                     SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                    responseMessage =fluxFAResponseRequest.getResponse();
-                    fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
-                    LOG.debug("--FLUXFAResponse message received in the Plugin is:"+responseMessage);
+                    try {
+                        LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
+                        String rawMessage = fluxFAResponseRequest.getResponse();
+                        FLUXResponseMessage message = PluginJAXBMarshaller.unMarshallMessage(rawMessage, FLUXResponseMessage.class);
+                        responseMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(message);
+
+                        fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
+                        LOG.debug("--FLUXFAResponse message received in the Plugin is:"+responseMessage);
+                    } catch (PluginException e) {
+                        responseMessage = fluxFAResponseRequest.getResponse();
+                    }
                     break;
                 default:
                     LOG.error("Not supported method");
@@ -86,7 +95,7 @@ public class PluginNameEventBusListener implements MessageListener {
         String cleanXMLMessage=null;
 
         try {
-            FLUXFAReportMessage fluxfaReportMessage = eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.JAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXFAReportMessage.class);
+            FLUXFAReportMessage fluxfaReportMessage = PluginJAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXFAReportMessage.class);
 
             cleanXMLMessage =JAXBMarshaller.marshallJaxBObjectToString(fluxfaReportMessage);
 
