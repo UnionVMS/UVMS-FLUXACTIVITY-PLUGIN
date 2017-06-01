@@ -9,6 +9,7 @@ import eu.europa.ec.fisheries.uvms.message.MessageException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginException;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.PluginJAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,13 +87,11 @@ public class PluginNameEventBusListener implements MessageListener {
         String cleanXMLMessage=null;
 
         try {
-            FLUXResponseMessage fluxResponseMessage = eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.JAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
-            cleanXMLMessage =JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            FLUXResponseMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
+            cleanXMLMessage =PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
             LOG.info("Cleaned FLUXResponse :"+cleanXMLMessage);
         } catch (PluginException e) {
             LOG.error("PluginException when trying to clean FLUXResponseMessage",e);
-        } catch (ExchangeModelMarshallException e) {
-            LOG.error("ExchangeModelMarshallException when trying to clean FLUXResponseMessage",e);
         }
 
         return cleanXMLMessage;
