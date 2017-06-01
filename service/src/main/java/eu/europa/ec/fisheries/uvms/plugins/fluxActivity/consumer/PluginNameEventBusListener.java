@@ -13,7 +13,6 @@ import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.PluginJAXBMarshal
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import javax.ejb.ActivationConfigProperty;
@@ -26,13 +25,13 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 @MessageDriven(mappedName = ExchangeModelConstants.PLUGIN_EVENTBUS, activationConfig = {
-        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = ExchangeModelConstants.CONNECTION_TYPE),
+        @ActivationConfigProperty(propertyName = "messagingType",          propertyValue = ExchangeModelConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = ActivityPluginConstatns.DURABLE),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = ExchangeModelConstants.DESTINATION_TYPE_TOPIC),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = ExchangeModelConstants.EVENTBUS_NAME),
-        @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = ActivityPluginConstatns.SUBSCRIPTION_NAME_EV),
-        @ActivationConfigProperty(propertyName = "clientId", propertyValue = ActivityPluginConstatns.CLIENT_ID_EV),
-        @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = ActivityPluginConstatns.MESSAGE_SELECTOR_EV)
+        @ActivationConfigProperty(propertyName = "destinationType",        propertyValue = ExchangeModelConstants.DESTINATION_TYPE_TOPIC),
+        @ActivationConfigProperty(propertyName = "destination",            propertyValue = ExchangeModelConstants.EVENTBUS_NAME),
+        @ActivationConfigProperty(propertyName = "subscriptionName",       propertyValue = ActivityPluginConstatns.SUBSCRIPTION_NAME_EV),
+        @ActivationConfigProperty(propertyName = "clientId",               propertyValue = ActivityPluginConstatns.CLIENT_ID_EV),
+        @ActivationConfigProperty(propertyName = "messageSelector",        propertyValue = ActivityPluginConstatns.MESSAGE_SELECTOR_EV)
 })
 public class PluginNameEventBusListener implements MessageListener {
 
@@ -61,18 +60,11 @@ public class PluginNameEventBusListener implements MessageListener {
             switch (request.getMethod()) {
 
                 case SET_FLUX_RESPONSE:
+                    LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
                     SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                    try {
-                        LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
-                        String rawMessage = fluxFAResponseRequest.getResponse();
-                        FLUXResponseMessage message = PluginJAXBMarshaller.unMarshallMessage(rawMessage, FLUXResponseMessage.class);
-                        responseMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(message);
-
-                        fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
-                        LOG.debug("--FLUXFAResponse message received in the Plugin is:" + responseMessage);
-                    } catch (PluginException e) {
-                        responseMessage = fluxFAResponseRequest.getResponse();
-                    }
+                    responseMessage =fluxFAResponseRequest.getResponse();
+                    fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
+                    LOG.debug("--FLUXFAResponse message received in the Plugin is:"+responseMessage);
                     break;
                 default:
                     LOG.error("Not supported method");
@@ -80,13 +72,28 @@ public class PluginNameEventBusListener implements MessageListener {
             }
 
 
-            fluxMessageProducer.sendModuleMessage(responseMessage, null);
+            fluxMessageProducer.sendModuleMessage(cleanFLUXResponseMessage(responseMessage),null);
             LOG.info("--FLUXFAResponse message sent successfully to FLUX");
 
-        } catch (MessageException e) {
-            LOG.error("Not able to send message to FLUX", e);
-        } catch (ExchangeModelMarshallException | NullPointerException e) {
+        }catch (MessageException e) {
+            LOG.error("Not able to send message to FLUX",e);
+        }
+        catch (ExchangeModelMarshallException | NullPointerException e) {
             LOG.error("[ Error when receiving message in fluxActivity " + startup.getRegisterClassName() + " ]", e);
         }
+    }
+
+    private String cleanFLUXResponseMessage(String fluxFAResponse){
+        String cleanXMLMessage=null;
+
+        try {
+            FLUXResponseMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
+            cleanXMLMessage =PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            LOG.info("Cleaned FLUXResponse :"+cleanXMLMessage);
+        } catch (PluginException e) {
+            LOG.error("PluginException when trying to clean FLUXResponseMessage",e);
+        }
+
+        return cleanXMLMessage;
     }
 }

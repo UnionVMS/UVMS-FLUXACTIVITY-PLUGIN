@@ -52,8 +52,7 @@ public class FluxMessageConsumer implements MessageListener {
              if(textMessage ==null || textMessage.getText() ==null)
                  throw new Exception("Message received in ERS Plugin is null.");
 
-            String message =textMessage.getText();
-            LOG.debug("Received FAReportMessage :"+message);
+            LOG.debug("Received FAReportMessage :");
             exchange.sendFLUXFAReportMessageReportToExchange(textMessage.getText(),exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage));
             LOG.info("message sent successfully to exchange module");
 
