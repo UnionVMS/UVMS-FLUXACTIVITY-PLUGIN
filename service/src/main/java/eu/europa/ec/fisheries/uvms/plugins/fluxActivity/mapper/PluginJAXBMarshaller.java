@@ -27,9 +27,9 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JAXBMarshaller {
+public class PluginJAXBMarshaller {
 
-    private final static Logger LOG = LoggerFactory.getLogger(JAXBMarshaller.class);
+    private final static Logger LOG = LoggerFactory.getLogger(PluginJAXBMarshaller.class);
 
     private static Map<String, JAXBContext> contexts = new HashMap<>();
 
@@ -52,8 +52,10 @@ public class JAXBMarshaller {
                 LOG.debug("Stored contexts: {}", contexts.size());
                 LOG.debug("JAXBContext creation time: {}", (System.currentTimeMillis() - before));
             }
+
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new FluxNamespaceMapper());
             StringWriter sw = new StringWriter();
             marshaller.marshal(data, sw);
             long before = System.currentTimeMillis();
