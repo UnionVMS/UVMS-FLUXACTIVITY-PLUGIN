@@ -25,10 +25,10 @@ public class FluxConnectionConstants {
     // Business procedure signature
 
 
-    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
-    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
+  //  public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
+    //public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
 
 
- //    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAPlugin";
-  //   public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAPlugin";
+     public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAPlugin";
+     public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAPlugin";
 }

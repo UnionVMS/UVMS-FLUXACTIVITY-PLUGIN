@@ -12,7 +12,7 @@ import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginExceptio
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FluxMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
@@ -71,7 +71,7 @@ public class PluginNameEventBusListener implements MessageListener {
             }
 
 
-            fluxMessageProducer.sendModuleMessage(extractCleanXMLMessage(responseMessage),null);
+            fluxMessageProducer.sendModuleMessage(cleanFLUXResponseMessage(responseMessage),null);
             LOG.info("--FLUXFAResponse message sent successfully to FLUX");
 
         }catch (MessageException e) {
@@ -82,18 +82,17 @@ public class PluginNameEventBusListener implements MessageListener {
         }
     }
 
-    private String extractCleanXMLMessage(String fluxFAResponse){
+    private String cleanFLUXResponseMessage(String fluxFAResponse){
         String cleanXMLMessage=null;
 
         try {
-            FLUXFAReportMessage fluxfaReportMessage = eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.JAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXFAReportMessage.class);
-
-            cleanXMLMessage =JAXBMarshaller.marshallJaxBObjectToString(fluxfaReportMessage);
-
+            FLUXResponseMessage fluxResponseMessage = eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.JAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
+            cleanXMLMessage =JAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            LOG.info("Cleaned FLUXResponse :"+cleanXMLMessage);
         } catch (PluginException e) {
-            e.printStackTrace();
+            LOG.error("PluginException when trying to clean FLUXResponseMessage",e);
         } catch (ExchangeModelMarshallException e) {
-            e.printStackTrace();
+            LOG.error("ExchangeModelMarshallException when trying to clean FLUXResponseMessage",e);
         }
 
         return cleanXMLMessage;
