@@ -25,13 +25,13 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 @MessageDriven(mappedName = ExchangeModelConstants.PLUGIN_EVENTBUS, activationConfig = {
-        @ActivationConfigProperty(propertyName = "messagingType",          propertyValue = ExchangeModelConstants.CONNECTION_TYPE),
+        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = ExchangeModelConstants.CONNECTION_TYPE),
         @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = ActivityPluginConstatns.DURABLE),
-        @ActivationConfigProperty(propertyName = "destinationType",        propertyValue = ExchangeModelConstants.DESTINATION_TYPE_TOPIC),
-        @ActivationConfigProperty(propertyName = "destination",            propertyValue = ExchangeModelConstants.EVENTBUS_NAME),
-        @ActivationConfigProperty(propertyName = "subscriptionName",       propertyValue = ActivityPluginConstatns.SUBSCRIPTION_NAME_EV),
-        @ActivationConfigProperty(propertyName = "clientId",               propertyValue = ActivityPluginConstatns.CLIENT_ID_EV),
-        @ActivationConfigProperty(propertyName = "messageSelector",        propertyValue = ActivityPluginConstatns.MESSAGE_SELECTOR_EV)
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = ExchangeModelConstants.DESTINATION_TYPE_TOPIC),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = ExchangeModelConstants.EVENTBUS_NAME),
+        @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = ActivityPluginConstatns.SUBSCRIPTION_NAME_EV),
+        @ActivationConfigProperty(propertyName = "clientId", propertyValue = ActivityPluginConstatns.CLIENT_ID_EV),
+        @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = ActivityPluginConstatns.MESSAGE_SELECTOR_EV)
 })
 public class PluginNameEventBusListener implements MessageListener {
 
@@ -62,14 +62,14 @@ public class PluginNameEventBusListener implements MessageListener {
                 case SET_FLUX_RESPONSE:
                     LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
                     SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                    if(fluxFAResponseRequest ==null || fluxFAResponseRequest.getResponse() ==null)
+                    if (fluxFAResponseRequest == null || fluxFAResponseRequest.getResponse() == null)
                         throw new PluginException("Either SetFLUXFAResponseRequest is null or the message inside is null. ");
                     fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
-                    LOG.debug("--FLUXFAResponse message received in the Plugin is:"+fluxFAResponseRequest.getResponse());
-                    String fluxResponseMessage=cleanFLUXResponseMessage(responseMessage);
-                    if(fluxResponseMessage ==null)
+                    LOG.debug("--FLUXFAResponse message received in the Plugin is:" + fluxFAResponseRequest.getResponse());
+                    String fluxResponseMessage = cleanFLUXResponseMessage(responseMessage);
+                    if (fluxResponseMessage == null)
                         throw new PluginException("Cleaned FLUXResponseMessage is null. ");
-                    fluxMessageProducer.sendModuleMessage(fluxResponseMessage,null);
+                    fluxMessageProducer.sendModuleMessage(fluxResponseMessage, null);
                     LOG.info("--FLUXFAResponse message sent successfully to FLUX");
                     break;
                 default:
@@ -77,28 +77,24 @@ public class PluginNameEventBusListener implements MessageListener {
                     break;
             }
 
-
-
-
-        }catch (MessageException e) {
-            LOG.error("Not able to send message to FLUX",e);
-        }
-        catch (ExchangeModelMarshallException | NullPointerException e) {
+        } catch (MessageException e) {
+            LOG.error("Not able to send message to FLUX", e);
+        } catch (ExchangeModelMarshallException | NullPointerException e) {
             LOG.error("[ Error when receiving message in fluxActivity " + startup.getRegisterClassName() + " ]", e);
         } catch (PluginException e) {
-            LOG.error("Not able Process message received in FLUXActivity Plugin",e);
+            LOG.error("Not able Process message received in FLUXActivity Plugin", e);
         }
     }
 
-    private String cleanFLUXResponseMessage(String fluxFAResponse){
-        String cleanXMLMessage=null;
+    private String cleanFLUXResponseMessage(String fluxFAResponse) {
+        String cleanXMLMessage = null;
 
         try {
             FLUXResponseMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
-            cleanXMLMessage =PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
-            LOG.info("Cleaned FLUXResponse :"+cleanXMLMessage);
+            cleanXMLMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            LOG.info("Cleaned FLUXResponse :" + cleanXMLMessage);
         } catch (PluginException e) {
-            LOG.error("PluginException when trying to clean FLUXResponseMessage",e);
+            LOG.error("PluginException when trying to clean FLUXResponseMessage", e);
         }
 
         return cleanXMLMessage;
