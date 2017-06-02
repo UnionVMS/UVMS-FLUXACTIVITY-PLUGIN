@@ -62,9 +62,15 @@ public class PluginNameEventBusListener implements MessageListener {
                 case SET_FLUX_RESPONSE:
                     LOG.info("--FLUXFAResponse Received in FLUX ACTIVITY PLUGIN.");
                     SetFLUXFAResponseRequest fluxFAResponseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAResponseRequest.class);
-                    responseMessage =fluxFAResponseRequest.getResponse();
+                    if(fluxFAResponseRequest ==null || fluxFAResponseRequest.getResponse() ==null)
+                        throw new PluginException("Either SetFLUXFAResponseRequest is null or the message inside is null. ");
                     fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
-                    LOG.debug("--FLUXFAResponse message received in the Plugin is:"+responseMessage);
+                    LOG.debug("--FLUXFAResponse message received in the Plugin is:"+fluxFAResponseRequest.getResponse());
+                    String fluxResponseMessage=cleanFLUXResponseMessage(responseMessage);
+                    if(fluxResponseMessage ==null)
+                        throw new PluginException("Cleaned FLUXResponseMessage is null. ");
+                    fluxMessageProducer.sendModuleMessage(fluxResponseMessage,null);
+                    LOG.info("--FLUXFAResponse message sent successfully to FLUX");
                     break;
                 default:
                     LOG.error("Not supported method");
@@ -72,14 +78,15 @@ public class PluginNameEventBusListener implements MessageListener {
             }
 
 
-            fluxMessageProducer.sendModuleMessage(cleanFLUXResponseMessage(responseMessage),null);
-            LOG.info("--FLUXFAResponse message sent successfully to FLUX");
+
 
         }catch (MessageException e) {
             LOG.error("Not able to send message to FLUX",e);
         }
         catch (ExchangeModelMarshallException | NullPointerException e) {
             LOG.error("[ Error when receiving message in fluxActivity " + startup.getRegisterClassName() + " ]", e);
+        } catch (PluginException e) {
+            LOG.error("Not able Process message received in FLUXActivity Plugin",e);
         }
     }
 
