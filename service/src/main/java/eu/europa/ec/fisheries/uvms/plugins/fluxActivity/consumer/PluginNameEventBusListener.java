@@ -66,7 +66,7 @@ public class PluginNameEventBusListener implements MessageListener {
                         throw new PluginException("Either SetFLUXFAResponseRequest is null or the message inside is null. ");
                     fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
                     LOG.debug("--FLUXFAResponse message received in the Plugin is:" + fluxFAResponseRequest.getResponse());
-                    String fluxResponseMessage = cleanFLUXResponseMessage(responseMessage);
+                    String fluxResponseMessage = cleanFLUXResponseMessage(fluxFAResponseRequest.getResponse());
                     if (fluxResponseMessage == null)
                         throw new PluginException("Cleaned FLUXResponseMessage is null. ");
                     fluxMessageProducer.sendModuleMessage(fluxResponseMessage, null);
@@ -89,6 +89,10 @@ public class PluginNameEventBusListener implements MessageListener {
     private String cleanFLUXResponseMessage(String fluxFAResponse) {
         String cleanXMLMessage = null;
 
+        if(fluxFAResponse ==null){
+            LOG.error("fluxFAResponse received in clean method is null");
+            return null;
+        }
         try {
             FLUXResponseMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
             cleanXMLMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
