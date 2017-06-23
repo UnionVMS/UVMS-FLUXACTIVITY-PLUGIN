@@ -19,6 +19,11 @@
         <application.version>${project.parent.version}</application.version>
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
+
+        <provider.url>http-remoting://10.155.0.10:8180</provider.url>
+        <security.principal.id>fluxq</security.principal.id>
+        <security.principal.pwd>testpassword</security.principal.pwd>
+
     </properties>
 
     <dependencies>
@@ -26,6 +31,7 @@
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
+            <classifier>date</classifier>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -76,6 +82,17 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>*.xml</include>
+                </includes>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
 </project>

@@ -15,9 +15,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.*;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.jms.JMSException;
 import java.util.Map;
+import java.util.Properties;
 
 @Singleton
 @Startup
@@ -42,6 +47,8 @@ public class StartupBean extends PluginDataHolder {
     private CapabilityListType capabilities;
     private SettingListType settingList;
     private ServiceType serviceType;
+
+    private FluxParameters fluxParameters;
 
     @PostConstruct
     public void startup() {
@@ -73,8 +80,20 @@ public class StartupBean extends PluginDataHolder {
         for (Map.Entry<String, String> entry : super.getSettings().entrySet()) {
             LOG.debug("Setting: KEY: {} , VALUE: {}", entry.getKey(), entry.getValue());
         }
-
+        populateFluxParameters();
         LOG.info("PLUGIN STARTED");
+    }
+
+    /**
+     * Populates the flux connection parameters getting them from the properties file.
+     */
+    private void populateFluxParameters() {
+        fluxParameters = new FluxParameters();
+        Properties plugProps = super.getPluginApplicaitonProperties();
+        fluxParameters.populate(
+                (String)plugProps.get("provider.url"),
+                (String)plugProps.get("security.principal.id"),
+                (String)plugProps.get("security.principal.pwd"));
     }
 
     @PreDestroy
@@ -166,6 +185,9 @@ public class StartupBean extends PluginDataHolder {
     }
     public void setIsEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
+    }
+    public FluxParameters getFluxParameters() {
+        return fluxParameters;
     }
 
 }
