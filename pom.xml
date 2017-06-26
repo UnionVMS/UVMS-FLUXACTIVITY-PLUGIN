@@ -25,13 +25,20 @@
         <commons.lang.version>2.6</commons.lang.version>
         <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
-        <uvms.commons.version>2.0.18-SNAPSHOT</uvms.commons.version>
+        <uvms.commons.version>2.0.21-SNAPSHOT</uvms.commons.version>
         <exchange.model.version>3.0.5-SNAPSHOT</exchange.model.version>
+        <jaxb-impl.version>2.2.7</jaxb-impl.version>
 
 		<scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
     </properties>
    
     <dependencies>
+
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb-impl.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>javax</groupId>
