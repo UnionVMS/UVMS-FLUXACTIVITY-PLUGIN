@@ -21,7 +21,7 @@
         <audit.model.version>2.0.3</audit.model.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-		<activity.model.fa>0.5.5</activity.model.fa>
+		<activity.model>0.5.12-SNAPSHOT</activity.model>
         <commons.lang.version>2.6</commons.lang.version>
         <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
@@ -80,11 +80,11 @@
         </dependency>
 
 
-	  <dependency>
+	    <dependency>
                 <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
-                <artifactId>activity-model-fa</artifactId>
-                <version>${activity.model.fa}</version>
-      </dependency>
+                <artifactId>activity-model</artifactId>
+                <version>${activity.model}</version>
+        </dependency>
 
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
