@@ -10,7 +10,7 @@ import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.PluginJAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FLUXMessageProducerNew;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FLUXMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -40,14 +40,8 @@ public class PluginNameEventBusListener implements MessageListener {
     @EJB
     StartupBean startup;
 
-
-  //
-  //  @EJB
-  //FluxMessageProducer fluxMessageProducer;
-   // FluxMessageProducerNew fluxMessageProducer;
-
     @EJB
-    FLUXMessageProducerNew fluxMessageProducerNew;
+    FLUXMessageProducer fluxMessageProducer;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -71,13 +65,12 @@ public class PluginNameEventBusListener implements MessageListener {
                     if (fluxFAResponseRequest == null || fluxFAResponseRequest.getResponse() == null)
                         throw new PluginException("Either SetFLUXFAResponseRequest is null or the message inside is null. ");
 
-               //     fluxMessageProducer.readJMSPropertiesFromExchangeResponse(fluxFAResponseRequest); // Initialize JMS Properties before sending message to FLUXQueue
                     LOG.debug("--FLUXFAResponse message received in the Plugin is:" + fluxFAResponseRequest.getResponse());
                     String fluxResponseMessage = cleanFLUXResponseMessage(fluxFAResponseRequest.getResponse());
                     if (fluxResponseMessage == null)
                         throw new PluginException("Cleaned FLUXResponseMessage is null. ");
-                    fluxMessageProducerNew.sendModuleMessage(fluxResponseMessage,null,fluxMessageProducerNew.getFLUXMessageProperties(fluxFAResponseRequest));
-                   // fluxMessageProducer.sendModuleMessage(fluxResponseMessage, null);
+                    fluxMessageProducer.sendModuleMessage(fluxResponseMessage,null,fluxMessageProducer.getFLUXMessageProperties(fluxFAResponseRequest));
+
                     LOG.info("--FLUXFAResponse message sent successfully to FLUX");
                     break;
                 default:

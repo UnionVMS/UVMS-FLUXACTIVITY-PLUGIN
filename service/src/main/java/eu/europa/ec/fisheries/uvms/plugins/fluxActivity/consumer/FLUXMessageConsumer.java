@@ -32,8 +32,8 @@ import javax.jms.TextMessage;
         @ActivationConfigProperty(propertyName = "destination", propertyValue = FluxConnectionConstants.FLUX_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "messagingType", propertyValue = FluxConnectionConstants.CONNECTION_TYPE)
 })
-public class FLUXMessageConsumerNew implements MessageListener {
-    final static Logger LOG = LoggerFactory.getLogger(FluxMessageConsumer.class);
+public class FLUXMessageConsumer implements MessageListener {
+    final static Logger LOG = LoggerFactory.getLogger(FLUXMessageConsumer.class);
 
     @EJB
     ExchangeService exchange;
