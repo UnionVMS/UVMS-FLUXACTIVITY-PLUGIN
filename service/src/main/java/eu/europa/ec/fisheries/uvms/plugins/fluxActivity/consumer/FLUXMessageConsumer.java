@@ -1,4 +1,3 @@
-
 /*
 Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
 
@@ -10,7 +9,6 @@ details. You should have received a copy of the GNU General Public License along
 
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
-
 
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.ExchangeService;
@@ -26,15 +24,16 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
-
-@MessageDriven(mappedName = FluxConnectionConstants.FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME,  activationConfig = {
+/**
+ * Created by sanera on 14/08/2017.
+ */
+@MessageDriven(mappedName = FluxConnectionConstants.FLUX_MESSAGE_IN_QUEUE,  activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = FluxConnectionConstants.DESTINATION_TYPE_QUEUE),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = FluxConnectionConstants.FLUX_MESSAGE_IN_REMOTE_QUEUE),
-        @ActivationConfigProperty(propertyName = "connectionFactoryLookup", propertyValue = FluxConnectionConstants.FLUX_CONNECTION_FACTORY)
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = FluxConnectionConstants.FLUX_MESSAGE_IN_QUEUE_NAME),
+        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = FluxConnectionConstants.CONNECTION_TYPE)
 })
-public class FluxMessageConsumer implements MessageListener {
-
-    final static Logger LOG = LoggerFactory.getLogger(FluxMessageConsumer.class);
+public class FLUXMessageConsumer implements MessageListener {
+    final static Logger LOG = LoggerFactory.getLogger(FLUXMessageConsumer.class);
 
     @EJB
     ExchangeService exchange;
@@ -49,8 +48,8 @@ public class FluxMessageConsumer implements MessageListener {
         TextMessage textMessage = (TextMessage) inMessage;
 
         try {
-             if(textMessage ==null || textMessage.getText() ==null)
-                 throw new Exception("Message received in ERS Plugin is null.");
+            if(textMessage ==null || textMessage.getText() ==null)
+                throw new Exception("Message received in ERS Plugin is null.");
 
             LOG.debug("Received FAReportMessage :");
             exchange.sendFLUXFAReportMessageReportToExchange(textMessage.getText(),exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage));
@@ -61,10 +60,4 @@ public class FluxMessageConsumer implements MessageListener {
             LOG.error("Error while trying to send Flux FAReport message to exchange",e);
         }
     }
-
-
-
-
-
-
 }

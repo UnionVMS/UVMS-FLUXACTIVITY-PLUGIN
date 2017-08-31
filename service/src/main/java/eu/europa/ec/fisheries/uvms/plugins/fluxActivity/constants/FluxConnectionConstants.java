@@ -16,14 +16,17 @@ public class FluxConnectionConstants {
 
     public static final String DESTINATION_TYPE_QUEUE                = "javax.jms.Queue";
     public static final String FLUX_CONNECTION_FACTORY               = "java:/FluxFactory";
+    public static final String CONNECTION_TYPE = "javax.jms.MessageListener";
 
 
     // Queue details
     public static final String JMS_QUEUE_BRIDGE = "java:/jms/queue/bridge";
 
+    // send FLUX messages to this queue
+    public static final String FLUX_JMS_QUEUE_BRIDGE = "jms/queue/UVMSPluginBridge";
 
-    // Business procedure signature
-
+    public static  final String FLUX_MESSAGE_IN_QUEUE = "java:/jms/queue/UVMSFAPluginEvent";
+    public static  final String FLUX_MESSAGE_IN_QUEUE_NAME = "UVMSFAPluginEvent";
 
    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
    public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
