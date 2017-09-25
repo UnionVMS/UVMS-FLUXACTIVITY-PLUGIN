@@ -13,20 +13,19 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
 import eu.europa.ec.fisheries.uvms.message.AbstractProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by sanera on 14/08/2017.
@@ -88,9 +87,10 @@ public class FLUXMessageProducer extends AbstractProducer {
     }
 
     protected String createStringDate() {
-        GregorianCalendar gcal = (GregorianCalendar) Calendar.getInstance();
-        gcal.setTime(new Date(System.currentTimeMillis() + 1000000));
-        XMLGregorianCalendar xgcal = null;
+        GregorianCalendar gcal = (GregorianCalendar) GregorianCalendar.getInstance();
+        Date newDate = DateUtils.addHours(new Date(), 3);
+        gcal.setTime(newDate);
+        XMLGregorianCalendar xgcal;
         try {
             xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
             return xgcal.toString();
