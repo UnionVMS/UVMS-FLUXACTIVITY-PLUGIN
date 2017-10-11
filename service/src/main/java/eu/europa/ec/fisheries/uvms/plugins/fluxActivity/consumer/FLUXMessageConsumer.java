@@ -12,9 +12,6 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.ExchangeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -23,6 +20,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by sanera on 14/08/2017.
@@ -32,8 +30,8 @@ import javax.jms.TextMessage;
         @ActivationConfigProperty(propertyName = "destination", propertyValue = FluxConnectionConstants.FLUX_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "messagingType", propertyValue = FluxConnectionConstants.CONNECTION_TYPE)
 })
+@Slf4j
 public class FLUXMessageConsumer implements MessageListener {
-    final static Logger LOG = LoggerFactory.getLogger(FLUXMessageConsumer.class);
 
     @EJB
     ExchangeService exchange;
@@ -42,22 +40,17 @@ public class FLUXMessageConsumer implements MessageListener {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
-
-        LOG.info("------Received Message in ERS Activity plugin from FLUX--------");
-
+        log.info("[INFO] Received Message in UVMSFAPluginEvent Queue from FLUX.");
         TextMessage textMessage = (TextMessage) inMessage;
-
         try {
-            if(textMessage ==null || textMessage.getText() ==null)
-                throw new Exception("Message received in ERS Plugin is null.");
-
-            LOG.debug("Received FAReportMessage :");
+            if(textMessage ==null || textMessage.getText() ==null) {
+                throw new IllegalArgumentException("Message received in ERS Plugin is null.");
+            }
+            log.debug("[START] Received FAReportMessage :");
             exchange.sendFLUXFAReportMessageReportToExchange(textMessage.getText(),exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage));
-            LOG.info("message sent successfully to exchange module");
-
-
+            log.info("[END] Message sent successfully to exchange module.");
         } catch (Exception e) {
-            LOG.error("Error while trying to send Flux FAReport message to exchange",e);
+            log.error("Error while trying to send Flux FAReport message to exchange",e);
         }
     }
 }
