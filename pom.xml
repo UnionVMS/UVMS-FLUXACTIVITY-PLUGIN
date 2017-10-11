@@ -28,7 +28,6 @@
         <uvms.commons.version>2.0.28</uvms.commons.version>
         <exchange.model.version>4.0.2</exchange.model.version>
         <jaxb-impl.version>2.2.7</jaxb-impl.version>
-
 		<scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
     </properties>
    
