@@ -76,4 +76,19 @@ public class ExchangeMessageProperties {
     public void setMessageGuid(String messageGuid) {
         this.messageGuid = messageGuid;
     }
+
+
+    @Override
+    public String toString() {
+        return "ExchangeMessageProperties{" +
+                "username='" + username + '\'' +
+                ", reportType='" + reportType + '\'' +
+                ", DFValue='" + DFValue + '\'' +
+                ", onValue='" + onValue + '\'' +
+                ", date=" + date +
+                ", pluginType=" + pluginType +
+                ", senderReceiver='" + senderReceiver + '\'' +
+                ", messageGuid='" + messageGuid + '\'' +
+                '}';
+    }
 }

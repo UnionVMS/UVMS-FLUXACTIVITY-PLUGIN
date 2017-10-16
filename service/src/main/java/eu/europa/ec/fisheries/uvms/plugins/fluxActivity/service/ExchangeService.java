@@ -13,14 +13,15 @@ import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.DataSourceQueu
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SAXParserForFaFLUXMessge;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginMessageProducer;
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
+import org.xml.sax.SAXException;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import lombok.extern.slf4j.Slf4j;
-import org.xml.sax.SAXException;
+import java.util.Date;
 
 /**
  * @author jojoha
@@ -70,6 +71,7 @@ public class ExchangeService {
         exchangeMessageProperties.setSenderReceiver(extractStringPropertyFromJMSTextMessage(textMessage, FR));
         exchangeMessageProperties.setOnValue(extractStringPropertyFromJMSTextMessage(textMessage, ON));
         exchangeMessageProperties.setMessageGuid(extractMessageGuidFromInputXML(textMessage.getText()));
+        log.info("Properties read from the message:"+ exchangeMessageProperties );
         return exchangeMessageProperties;
     }
 
