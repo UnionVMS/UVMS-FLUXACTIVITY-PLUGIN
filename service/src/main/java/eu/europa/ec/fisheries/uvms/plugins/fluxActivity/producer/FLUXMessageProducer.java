@@ -36,15 +36,16 @@ public class FLUXMessageProducer extends AbstractProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(FLUXMessageProducer.class);
 
-    public static final String FLUX_ENV_AD      = "AD";
-    public static final String FLUX_ENV_DF      = "DF";
-    public static final String BUSINESS_UUID    = "BUSINESS_UUID";
-    public static final String FLUX_ENV_TODT    = "TODT";
-    public static final String FLUX_ENV_AR = "AR";
-    public static final String FLUX_ENV_FR = "FR";
-    public static final String FLUX_ENV_TO = "TO";
-    public static final String FLUX_ENV_CT = "CT";
-    public static final String FLUX_ENV_VB = "VB";
+    private static final String FLUX_ENV_AD = "AD";
+    private static final String FLUX_ENV_DF = "DF";
+    private static final String BUSINESS_UUID = "BUSINESS_UUID";
+    private static final String FLUX_ENV_TODT = "TODT";
+    private static final String FLUX_ENV_AR = "AR";
+    private static final String FLUX_ENV_FR = "FR";
+    private static final String FLUX_ENV_TO = "TO";
+    private static final String FLUX_ENV_CT = "CT";
+    private static final String FLUX_ENV_VB = "VB";
+    private static final String ON = "ON";
 
 
     @Override
@@ -53,26 +54,22 @@ public class FLUXMessageProducer extends AbstractProducer {
     }
 
 
-
-    public  Map<String, String> getFLUXMessageProperties(PluginBaseRequest responseRequest) {
-
+    public Map<String, String> getFLUXMessageProperties(PluginBaseRequest responseRequest) {
         Map<String, String> messageProperties = new HashMap<>();
-
-        if(responseRequest !=null){
-            messageProperties.put(FLUXMessageProducer.FLUX_ENV_AD,responseRequest.getDestination());
-            messageProperties.put(FLUXMessageProducer.FLUX_ENV_FR,responseRequest.getSenderOrReceiver());
-            messageProperties.put(FLUXMessageProducer.FLUX_ENV_DF,responseRequest.getFluxDataFlow());
-        }else {
+        if (responseRequest != null) {
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_AD, responseRequest.getDestination());
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_FR, responseRequest.getSenderOrReceiver());
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_DF, responseRequest.getFluxDataFlow());
+            messageProperties.put(FLUXMessageProducer.ON, responseRequest.getOnValue());
+        } else {
             LOG.error("PluginBaseRequest is null so, could not set AD/FR/DF values to the FLUXMEssage");
         }
-
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_AR,"true");
-        messageProperties.put(FLUXMessageProducer.BUSINESS_UUID,createBusinessUUID());
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_TODT,createStringDate());
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_TO,"60");
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_CT,"admin@dgmare.com");
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_VB,"ERROR");
-
+        messageProperties.put(FLUXMessageProducer.FLUX_ENV_AR, "true");
+        messageProperties.put(FLUXMessageProducer.BUSINESS_UUID, createBusinessUUID());
+        messageProperties.put(FLUXMessageProducer.FLUX_ENV_TODT, createStringDate());
+        messageProperties.put(FLUXMessageProducer.FLUX_ENV_TO, "60");
+        messageProperties.put(FLUXMessageProducer.FLUX_ENV_CT, "admin@dgmare.com");
+        messageProperties.put(FLUXMessageProducer.FLUX_ENV_VB, "ERROR");
         return messageProperties;
     }
 

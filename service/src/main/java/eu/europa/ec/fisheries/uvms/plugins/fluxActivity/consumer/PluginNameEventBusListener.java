@@ -48,15 +48,9 @@ public class PluginNameEventBusListener implements MessageListener {
     public void onMessage(Message inMessage) {
 
         LOG.debug("Eventbus listener for fluxActivity (MessageConstants.PLUGIN_SERVICE_CLASS_NAME): {}", startup.getRegisterClassName());
-
         TextMessage textMessage = (TextMessage) inMessage;
-
         try {
-
             PluginBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginBaseRequest.class);
-
-            String responseMessage = null;
-
             switch (request.getMethod()) {
 
                 case SET_FLUX_RESPONSE:
