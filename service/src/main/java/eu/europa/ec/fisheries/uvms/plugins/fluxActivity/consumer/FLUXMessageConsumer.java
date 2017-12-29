@@ -10,8 +10,11 @@ details. You should have received a copy of the GNU General Public License along
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.ExchangeService;
+import java.io.Reader;
+import java.io.StringReader;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -20,6 +23,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -47,10 +54,31 @@ public class FLUXMessageConsumer implements MessageListener {
                 throw new IllegalArgumentException("Message received in ERS Plugin is null.");
             }
             log.debug("[START] Received FAReportMessage :");
-            exchange.sendFLUXFAReportMessageReportToExchange(textMessage.getText(),exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage));
+            exchange.sendFishingActivityMessageToExchange(textMessage.getText(),exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage),
+                    extractActivityTypeFromMessage(textMessage.getText()));
             log.info("[END] Message sent successfully to exchange module.");
         } catch (Exception e) {
             log.error("Error while trying to send Flux FAReport message to exchange",e);
         }
     }
-}
+
+
+    public ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
+        String faRepLocalName = "FLUXFAReportMessage";
+        String faQueLocalName = "FLUXFAQueryMessage";
+        Reader reader = new StringReader(document);
+        XMLStreamReader xml = XMLInputFactory.newFactory().createXMLStreamReader(reader);
+        try {
+            while (xml.hasNext()) {
+                int nextNodeType = xml.next();
+                if (nextNodeType == XMLStreamConstants.START_ELEMENT && faRepLocalName.equals(xml.getLocalName())) {
+                    return ActivityType.FA_REPORT;
+                } else if(nextNodeType == XMLStreamConstants.START_ELEMENT && faQueLocalName.equals(xml.getLocalName())) {
+                    return ActivityType.FA_QUERY;
+                }
+            }
+        } finally {
+            xml.close();
+        }
+        return null;
+    }}

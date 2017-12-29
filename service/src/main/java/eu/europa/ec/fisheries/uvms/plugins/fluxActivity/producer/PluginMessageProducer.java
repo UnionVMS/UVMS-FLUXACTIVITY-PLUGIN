@@ -58,7 +58,6 @@ public class PluginMessageProducer {
             LOG.error("Failed to get InitialContext",e);
             throw new RuntimeException(e);
         }
-        //connectionFactory = JMSUtils.lookupConnectionFactory(ctx, ExchangeModelConstants.CONNECTION_FACTORY);
         connectionFactory = JMSUtils.lookupConnectionFactory();
         try {
             connection = connectionFactory.createConnection();

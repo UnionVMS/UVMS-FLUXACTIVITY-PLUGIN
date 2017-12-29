@@ -9,6 +9,7 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SAXParserForFaFLUXMessge;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
@@ -37,20 +38,31 @@ public class ExchangeService {
     private static final String ON = "ON";
 
     @EJB
-    PluginMessageProducer producer;
+    private PluginMessageProducer producer;
 
-    public void sendFLUXFAReportMessageReportToExchange(String fluxFAReportMessage, ExchangeMessageProperties prop) {
+    public void sendFishingActivityMessageToExchange(String fluxFAReportMessage, ExchangeMessageProperties prop, ActivityType activityType) {
         try {
-            log.info("[START] Preparing FLUXFAReportMessageRequest to send to exchange");
-            String text = ExchangeModuleRequestMapper.createFluxFAReportRequest(fluxFAReportMessage, prop.getUsername()
-                    , prop.getDFValue(), prop.getDate(), prop.getMessageGuid(), prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
-            log.info("[START] Exchange request created :" + text);
-            String messageId = producer.sendModuleMessage(text, DataSourceQueue.EXCHANGE);
+            log.info("[START] Preparing request of type [ " +activityType+ " ] to send to exchange...");
+            String exchnageReqStr = null;
+            switch(activityType){
+                case FA_REPORT :
+                    exchnageReqStr = ExchangeModuleRequestMapper.createFluxFAReportRequest(fluxFAReportMessage, prop.getUsername()
+                            , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                    break;
+                case FA_QUERY :
+                    exchnageReqStr = ExchangeModuleRequestMapper.createFaQueryRequest(fluxFAReportMessage, prop.getUsername()
+                            , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                    break;
+            }
+            log.info("[INFO] Request object created. Sending it to exchange..");
+            String messageId = producer.sendModuleMessage(exchnageReqStr, DataSourceQueue.EXCHANGE);
             log.info("[END] Message sent to exchange module :" + messageId);
         } catch (ExchangeModelMarshallException e) {
-            log.error("Couldn't create FluxFAReportRequest for Exchange", e);
+            log.error("[ERROR] Couldn't create FluxFAReportRequest for Exchange!", e);
         } catch (JMSException e) {
-            log.error("Couldn't send FluxFAReportRequest to Exchange", e);
+            log.error("[ERROR] Couldn't send FluxFAReportRequest to Exchange!", e);
 
         }
     }
