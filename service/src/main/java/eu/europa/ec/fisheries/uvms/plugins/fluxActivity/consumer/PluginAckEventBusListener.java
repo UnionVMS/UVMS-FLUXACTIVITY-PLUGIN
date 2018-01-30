@@ -4,57 +4,54 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginFault;
 import eu.europa.ec.fisheries.schema.exchange.registry.v1.ExchangeRegistryBaseRequest;
 import eu.europa.ec.fisheries.schema.exchange.registry.v1.RegisterServiceResponse;
 import eu.europa.ec.fisheries.schema.exchange.registry.v1.UnregisterServiceResponse;
-import eu.europa.ec.fisheries.uvms.exchange.model.constant.ExchangeModelConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.PluginService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ejb.*;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@MessageDriven(mappedName = ExchangeModelConstants.PLUGIN_EVENTBUS, activationConfig = {
-    @ActivationConfigProperty(propertyName = "messagingType",          propertyValue = ExchangeModelConstants.CONNECTION_TYPE),
-    @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = ActivityPluginConstatns.DURABLE),
-    @ActivationConfigProperty(propertyName = "destinationType",        propertyValue = ExchangeModelConstants.DESTINATION_TYPE_TOPIC),
-    @ActivationConfigProperty(propertyName = "destination",            propertyValue = ExchangeModelConstants.EVENTBUS_NAME),
-        @ActivationConfigProperty(propertyName = "subscriptionName",   propertyValue = ActivityPluginConstatns.SUBSCRIPTION_NAME_AC),
-        @ActivationConfigProperty(propertyName = "clientId",           propertyValue = ActivityPluginConstatns.CLIENT_ID_AC),
-        @ActivationConfigProperty(propertyName = "messageSelector",    propertyValue = ActivityPluginConstatns.MESSAGE_SELECTOR_AC)
+@MessageDriven(mappedName = MessageConstants.EVENT_BUS_TOPIC, activationConfig = {
+        @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
+        @ActivationConfigProperty(propertyName = MessageConstants.SUBSCRIPTION_DURABILITY_STR, propertyValue = MessageConstants.DURABLE_CONNECTION),
+        @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_TOPIC),
+        @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.EVENT_BUS_TOPIC_NAME),
+        @ActivationConfigProperty(propertyName = MessageConstants.SUBSCRIPTION_NAME_STR, propertyValue = ActivityPluginConstatns.SUBSCRIPTION_NAME_AC),
+        @ActivationConfigProperty(propertyName = MessageConstants.CLIENT_ID_STR, propertyValue = ActivityPluginConstatns.CLIENT_ID_AC),
+        @ActivationConfigProperty(propertyName = MessageConstants.MESSAGE_SELECTOR_STR, propertyValue = ActivityPluginConstatns.MESSAGE_SELECTOR_AC)
 })
 public class PluginAckEventBusListener implements MessageListener {
 
     final static Logger LOG = LoggerFactory.getLogger(PluginAckEventBusListener.class);
 
     @EJB
-    StartupBean startupService;
+    private StartupBean startupService;
 
     @EJB
-    PluginService fluxActivityService;
+    private PluginService fluxActivityService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
-
         LOG.info("Eventbus listener for fluxActivity at selector: {} got a message", startupService.getPluginResponseSubscriptionName());
-
         TextMessage textMessage = (TextMessage) inMessage;
-
         try {
-
             ExchangeRegistryBaseRequest request = tryConsumeRegistryBaseRequest(textMessage);
-
             if (request == null) {
                 PluginFault fault = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginFault.class);
                 handlePluginFault(fault);
                 return;
             }
-
             switch (request.getMethod()) {
                 case REGISTER_SERVICE:
                     RegisterServiceResponse registerResponse = JAXBMarshaller.unmarshallTextMessage(textMessage, RegisterServiceResponse.class);
@@ -69,7 +66,6 @@ public class PluginAckEventBusListener implements MessageListener {
                     LOG.error("Not supported method");
                     break;
             }
-
         } catch (ExchangeModelMarshallException | NullPointerException e) {
             LOG.error("[ Error when receiving message in fishingActivity ]", e);
         }
@@ -112,7 +108,7 @@ public class PluginAckEventBusListener implements MessageListener {
         try {
             return JAXBMarshaller.unmarshallTextMessage(textMessage, ExchangeRegistryBaseRequest.class);
         } catch (ExchangeModelMarshallException e) {
-            LOG.error("Error trying to consume BaseRequest",e);
+            LOG.error("Error trying to consume BaseRequest", e);
             return null;
         }
     }

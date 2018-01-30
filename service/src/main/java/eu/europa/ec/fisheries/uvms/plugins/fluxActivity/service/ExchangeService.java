@@ -6,23 +6,23 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SAXParserForFaFLUXMessge;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginMessageProducer;
-import lombok.extern.slf4j.Slf4j;
-import org.xml.sax.SAXException;
-
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToExchangeProducer;
+import java.util.Date;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
+import org.xml.sax.SAXException;
 
 /**
  * @author jojoha
@@ -38,7 +38,7 @@ public class ExchangeService {
     private static final String ON = "ON";
 
     @EJB
-    private PluginMessageProducer producer;
+    private PluginToExchangeProducer exchangeProducer;
 
     public void sendFishingActivityMessageToExchange(String fluxFAReportMessage, ExchangeMessageProperties prop, ActivityType activityType) {
         try {
@@ -57,13 +57,12 @@ public class ExchangeService {
                     break;
             }
             log.info("[INFO] Request object created. Sending it to exchange..");
-            String messageId = producer.sendModuleMessage(exchnageReqStr, DataSourceQueue.EXCHANGE);
-            log.info("[END] Message sent to exchange module :" + messageId);
+            String messageId = exchangeProducer.sendModuleMessage(exchnageReqStr, (Destination) null);
+            log.info("[END] Message sent to [EXCHANGE] module :" + messageId);
         } catch (ExchangeModelMarshallException e) {
             log.error("[ERROR] Couldn't create FluxFAReportRequest for Exchange!", e);
-        } catch (JMSException e) {
+        } catch (MessageException e) {
             log.error("[ERROR] Couldn't send FluxFAReportRequest to Exchange!", e);
-
         }
     }
 

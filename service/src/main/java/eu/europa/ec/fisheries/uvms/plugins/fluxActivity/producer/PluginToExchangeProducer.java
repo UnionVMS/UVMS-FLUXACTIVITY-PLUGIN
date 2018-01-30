@@ -10,17 +10,17 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
-import eu.europa.ec.fisheries.uvms.message.MessageException;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.DataSourceQueue;
+@Stateless
+@LocalBean
+public class PluginToExchangeProducer extends AbstractProducer {
 
-/**
- * Created by kovian on 02/12/2016.
- */
-public interface MessageProducer {
-
-    String sendRulesModuleMessage(String text) throws MessageException;
-
-    String sendModuleMessage(String text, DataSourceQueue queue) throws MessageException;
-
+    @Override
+    public String getDestinationName() {
+        return MessageConstants.QUEUE_EXCHANGE_EVENT;
+    }
 }

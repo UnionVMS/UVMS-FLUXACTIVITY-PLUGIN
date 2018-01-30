@@ -11,20 +11,16 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractTopicProducer;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
-/**
- * Created by kovian on 28/07/2017.
- */
 @Stateless
 @LocalBean
-public class FluxBridgeProducer extends AbstractProducer {
+public class PluginToEventBusTopicProducer extends AbstractTopicProducer {
 
     @Override
-    public String getDestinationName() {
-        return MessageConstants.QUEUE_PLUGIN_BRIDGE;
+    protected String getDestinationName() {
+        return MessageConstants.EVENT_BUS_TOPIC;
     }
-
 }

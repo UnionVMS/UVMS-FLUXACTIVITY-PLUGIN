@@ -27,15 +27,12 @@ public class ServiceMapper {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
 
     public static ServiceType getServiceType(String serviceClassName, String fluxActivityDisplayName, String description, PluginType fluxActivityType, String responseMessageName) {
-
         if (responseMessageName == null) {
             throw new IllegalArgumentException("Response message must be provided!");
         }
-
         if (serviceClassName == null) {
             throw new IllegalArgumentException("ServiceClassName message must be provided!");
         }
-
         ServiceType serviceType = new ServiceType();
         serviceType.setDescription(description);
         serviceType.setName(fluxActivityDisplayName);
@@ -64,13 +61,11 @@ public class ServiceMapper {
         while (itr.hasNext()) {
             Map.Entry<String, String> tmp = itr.next();
             CapabilityType setting = new CapabilityType();
-
             try {
                 setting.setType(CapabilityTypeType.valueOf(tmp.getKey()));
             } catch (Exception e) {
                 LOG.error("Error when parsing to Enum type from String KEY: {}", tmp.getKey(), e);
             }
-
             setting.setValue(tmp.getValue());
             capabilityListType.getCapability().add(setting);
         }
@@ -78,7 +73,6 @@ public class ServiceMapper {
     }
 
     public static void mapToMapFromProperties(ConcurrentMap<String, String> map, Properties props, String registerClassName) {
-
         for (Map.Entry entrySet : props.entrySet()) {
             Object key = entrySet.getKey();
             if (key.getClass().isAssignableFrom(String.class)) {

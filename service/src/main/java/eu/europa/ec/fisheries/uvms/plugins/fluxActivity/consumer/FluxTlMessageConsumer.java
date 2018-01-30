@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
         @ActivationConfigProperty(propertyName = "messagingType", propertyValue = FluxConnectionConstants.CONNECTION_TYPE)
 })
 @Slf4j
-public class FLUXMessageConsumer implements MessageListener {
+public class FluxTlMessageConsumer implements MessageListener {
 
     @EJB
     ExchangeService exchange;
@@ -50,7 +50,7 @@ public class FLUXMessageConsumer implements MessageListener {
         log.info("[INFO] Received Message in UVMSFAPluginEvent Queue from FLUX.");
         TextMessage textMessage = (TextMessage) inMessage;
         try {
-            if(textMessage ==null || textMessage.getText() ==null) {
+            if(textMessage == null || textMessage.getText() == null) {
                 throw new IllegalArgumentException("Message received in ERS Plugin is null.");
             }
             log.debug("[START] Received FAReportMessage :");
