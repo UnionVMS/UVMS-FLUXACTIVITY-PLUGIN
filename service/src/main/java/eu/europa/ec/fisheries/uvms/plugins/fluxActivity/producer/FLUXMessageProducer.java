@@ -11,8 +11,8 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
-import eu.europa.ec.fisheries.uvms.message.AbstractProducer;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -23,18 +23,16 @@ import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by sanera on 14/08/2017.
  */
 @Stateless
 @LocalBean
+@Slf4j
 public class FLUXMessageProducer extends AbstractProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FLUXMessageProducer.class);
 
     private static final String FLUX_ENV_AD = "AD";
     private static final String FLUX_ENV_DF = "DF";
@@ -50,7 +48,7 @@ public class FLUXMessageProducer extends AbstractProducer {
 
     @Override
     public String getDestinationName() {
-        return FluxConnectionConstants.FLUX_JMS_QUEUE_BRIDGE;
+        return MessageConstants.QUEUE_PLUGIN_BRIDGE;
     }
 
 
@@ -62,7 +60,7 @@ public class FLUXMessageProducer extends AbstractProducer {
             messageProperties.put(FLUXMessageProducer.FLUX_ENV_DF, responseRequest.getFluxDataFlow());
             messageProperties.put(FLUXMessageProducer.ON, responseRequest.getOnValue());
         } else {
-            LOG.error("PluginBaseRequest is null so, could not set AD/FR/DF values to the FLUXMEssage");
+            log.error("PluginBaseRequest is null so, could not set AD/FR/DF values to the FLUXMEssage");
         }
         messageProperties.put(FLUXMessageProducer.FLUX_ENV_AR, "true");
         messageProperties.put(FLUXMessageProducer.BUSINESS_UUID, createBusinessUUID());
@@ -92,7 +90,7 @@ public class FLUXMessageProducer extends AbstractProducer {
             xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
             return xgcal.toString();
         } catch (DatatypeConfigurationException | NullPointerException e) {
-            LOG.error("Error occured while creating newXMLGregorianCalendar", e);
+            log.error("Error occured while creating newXMLGregorianCalendar", e);
             return null;
         }
     }

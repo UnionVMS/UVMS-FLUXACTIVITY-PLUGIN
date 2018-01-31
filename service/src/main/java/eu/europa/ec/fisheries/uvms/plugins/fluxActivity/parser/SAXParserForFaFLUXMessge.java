@@ -48,7 +48,7 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
      */
     public void parseDocument(String message) throws SAXException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser parser = null;
+        SAXParser parser;
         try {
             parser = factory.newSAXParser();
              StringReader sr = new StringReader(message);
@@ -73,7 +73,6 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
             isFLUXReportDocumentStart =true;
             LOG.debug("FLUXReportDocument tag found.");
         }
-
         if(ID_TAG.equals(elementName) && isFLUXReportDocumentStart){
             isIDStart =true;
             LOG.debug("Found ID tag inside FLUXReportDocument tag");
@@ -89,12 +88,10 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
     @Override
 
     public void endElement(String s, String s1, String element) throws SAXException {
-
         if(FLUX_REPORT_DOCUMENT_TAG.equals(element)){
             isFLUXReportDocumentStart =false;
             LOG.debug("FLUXReportDocument tag Ended.");
         }
-
         if(ID_TAG.equals(element)){
             isIDStart =false;
             isUUIDForFluxReportDocument =false;
@@ -104,55 +101,41 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
 
     @Override
     public void characters(char[] ac, int i, int j) throws SAXException {
-
         String  tmpValue = new String(ac, i, j);
-
         // Extract UUID value and stop parsing of further document?
         if(isUUIDForFluxReportDocument){
             uuidValue = tmpValue;
             throw new UUIDSAXException("Found the required value . so, stop parsing entire document");
         }
-
-
     }
 
     public String getUuid() {
         return uuid;
     }
-
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-
-
     public boolean isFLUXReportDocumentStart() {
         return isFLUXReportDocumentStart;
     }
-
     public void setFLUXReportDocumentStart(boolean FLUXReportDocumentStart) {
         isFLUXReportDocumentStart = FLUXReportDocumentStart;
     }
-
     public boolean isIDStart() {
         return isIDStart;
     }
-
     public void setIDStart(boolean IDStart) {
         isIDStart = IDStart;
     }
-
     public boolean isUUIDForFluxReportDocument() {
         return isUUIDForFluxReportDocument;
     }
-
     public void setUUIDForFluxReportDocument(boolean UUIDForFluxReportDocument) {
         isUUIDForFluxReportDocument = UUIDForFluxReportDocument;
     }
-
     public String getUuidValue() {
         return uuidValue;
     }
-
     public void setUuidValue(String uuidValue) {
         this.uuidValue = uuidValue;
     }

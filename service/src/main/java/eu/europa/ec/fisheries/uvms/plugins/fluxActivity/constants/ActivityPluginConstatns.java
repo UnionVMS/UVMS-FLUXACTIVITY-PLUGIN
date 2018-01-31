@@ -19,6 +19,4 @@ public class ActivityPluginConstatns {
     public static final String CLIENT_ID_AC 		= FA_GROUP_ID_ARTIFACT_ID_AC;
     public static final String SUBSCRIPTION_NAME_AC = FA_GROUP_ID_ARTIFACT_ID_AC;
     public static final String MESSAGE_SELECTOR_AC  = "ServiceName='"+ FA_GROUP_ID_ARTIFACT_ID_AC +"'";
-
-    public static final String DURABLE = "Durable";
 }
