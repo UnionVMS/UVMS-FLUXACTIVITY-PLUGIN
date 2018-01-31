@@ -11,8 +11,8 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.FluxConnectionConstants;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ public class FLUXMessageProducer extends AbstractProducer {
 
     @Override
     public String getDestinationName() {
-        return FluxConnectionConstants.FLUX_JMS_QUEUE_BRIDGE;
+        return MessageConstants.QUEUE_PLUGIN_BRIDGE;
     }
 
 

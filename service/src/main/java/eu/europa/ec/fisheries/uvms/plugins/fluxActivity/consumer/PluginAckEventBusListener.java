@@ -9,7 +9,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.PluginService;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -36,9 +35,6 @@ public class PluginAckEventBusListener implements MessageListener {
 
     @EJB
     private StartupBean startupService;
-
-    @EJB
-    private PluginService fluxActivityService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
