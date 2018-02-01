@@ -40,9 +40,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FluxTlMessageConsumer implements MessageListener {
 
-    @EJB
-    ExchangeService exchange;
+    private static final String FLUXFAREPORT_MESSAGE = "FLUXFAReportMessage";
+    private static final String FLUXFAQUERY_MESSAGE = "FLUXFAQueryMessage";
 
+    @EJB
+    private ExchangeService exchangeService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -53,33 +55,31 @@ public class FluxTlMessageConsumer implements MessageListener {
             if (textMessage == null || textMessage.getText() == null) {
                 throw new IllegalArgumentException("Message received in ERS Plugin is null.");
             }
-            log.debug("[START] Received FAReportMessage :");
-            exchange.sendFishingActivityMessageToExchange(textMessage.getText(), exchange.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage),
+            exchangeService.sendFishingActivityMessageToExchange(textMessage.getText(),
+                    exchangeService.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage),
                     extractActivityTypeFromMessage(textMessage.getText()));
             log.info("[END] Message sent successfully to exchange module.");
         } catch (Exception e) {
-            log.error("Error while trying to send Flux FAReport message to exchange", e);
+            log.error("[ERROR] Error while trying to send Flux FAReport message to exchange", e);
         }
     }
 
 
     public ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
-        String faRepLocalName = "FLUXFAReportMessage";
-        String faQueLocalName = "FLUXFAQueryMessage";
         Reader reader = new StringReader(document);
         XMLStreamReader xml = XMLInputFactory.newFactory().createXMLStreamReader(reader);
-        try {
-            while (xml.hasNext()) {
-                int nextNodeType = xml.next();
-                if (nextNodeType == XMLStreamConstants.START_ELEMENT && faRepLocalName.equals(xml.getLocalName())) {
-                    return ActivityType.FA_REPORT;
-                } else if (nextNodeType == XMLStreamConstants.START_ELEMENT && faQueLocalName.equals(xml.getLocalName())) {
-                    return ActivityType.FA_QUERY;
-                }
+        ActivityType type = null;
+        while (xml.hasNext()) {
+            int nextNodeType = xml.next();
+            if (nextNodeType == XMLStreamConstants.START_ELEMENT && FLUXFAREPORT_MESSAGE.equals(xml.getLocalName())) {
+                type = ActivityType.FA_REPORT;
+                break;
+            } else if (nextNodeType == XMLStreamConstants.START_ELEMENT && FLUXFAQUERY_MESSAGE.equals(xml.getLocalName())) {
+                type =  ActivityType.FA_QUERY;
+                break;
             }
-        } finally {
-            xml.close();
         }
-        return null;
+        xml.close();
+        return type;
     }
 }
