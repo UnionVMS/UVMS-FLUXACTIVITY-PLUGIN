@@ -18,7 +18,6 @@ import java.util.Date;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +55,8 @@ public class ExchangeService {
                             , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
                     break;
             }
-            log.info("[INFO] Request object created. Sending it to exchange..");
-            String messageId = exchangeProducer.sendModuleMessage(exchnageReqStr, (Destination) null);
-            log.info("[END] Message sent to [EXCHANGE] module :" + messageId);
+            String messageId = exchangeProducer.sendModuleMessage(exchnageReqStr, null);
+            log.info("[END] Request object created and Message sent to [EXCHANGE] module :" + messageId);
         } catch (ExchangeModelMarshallException e) {
             log.error("[ERROR] Couldn't create FluxFAReportRequest for Exchange!", e);
         } catch (MessageException e) {
