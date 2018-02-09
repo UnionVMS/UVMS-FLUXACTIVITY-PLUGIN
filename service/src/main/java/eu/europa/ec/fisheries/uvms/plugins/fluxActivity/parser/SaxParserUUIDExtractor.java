@@ -10,6 +10,12 @@ details. You should have received a copy of the GNU General Public License along
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser;
 
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import java.io.IOException;
+import java.io.StringReader;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -17,32 +23,53 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.StringReader;
-
 /**
  * This class Will use SAX Parser to parse input XML document and extracts UUID value of FLUXReportDocument
  * Created by sanera on 16/05/2017.
  */
-public class SAXParserForFaFLUXMessge extends DefaultHandler {
-    final static Logger LOG = LoggerFactory.getLogger(SAXParserForFaFLUXMessge.class);
+public class SaxParserUUIDExtractor extends DefaultHandler {
 
-    private static final String FLUX_REPORT_DOCUMENT_TAG ="rsm:FLUXReportDocument";
-    private static final String ID_TAG ="ram:ID";
-    private static final String UUID_ATTRIBUTE ="UUID";
+    final static Logger LOG = LoggerFactory.getLogger(SaxParserUUIDExtractor.class);
+
+    private static final String FA_REPORT_DOCUMENT_UUID_CONTAINER_TAG = "rsm:FLUXReportDocument";
+    private static final String FA_QUERY_UUID_CONTAINER_TAG = "rsm:FAQuery";
+    private static final String FLUX_RESPONSE_UUID_CONTAINER_TAG = "ns3:FLUXResponseDocument";
+
+    private static final String ID_TAG = "ram:ID";
+    private static final String ID_TAG_FOR_FLUX_RESPONSE = "ID";
+    private static final String UUID_ATTRIBUTE = "UUID";
 
     private String uuid;
-    private boolean isFLUXReportDocumentStart;
+    private boolean isStartOfInterestedTag;
     private boolean isIDStart;
-    private boolean isUUIDForFluxReportDocument;
+    private boolean isUUIDStart;
     private String uuidValue; // store FLUXReportDocument UUID value inside this
 
+    // Three case here : FaReportMessage, FaQueryMessage, FLUXResponseMessage
+    private String CONTAINER_TAG;
+
+
+    private SaxParserUUIDExtractor(){
+        super();
+    }
+
+    public SaxParserUUIDExtractor(ActivityType type){
+        switch (type){
+            case FA_QUERY:
+                CONTAINER_TAG = FA_QUERY_UUID_CONTAINER_TAG;
+                break;
+            case FA_REPORT:
+                CONTAINER_TAG = FA_REPORT_DOCUMENT_UUID_CONTAINER_TAG;
+                break;
+            case FLUX_RESPONSE:
+                CONTAINER_TAG = FLUX_RESPONSE_UUID_CONTAINER_TAG;
+                break;
+        }
+    }
 
     /**
      * This method parse input document using SAX parser
+     *
      * @param message
      * @throws SAXException
      */
@@ -51,35 +78,31 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
         SAXParser parser;
         try {
             parser = factory.newSAXParser();
-             StringReader sr = new StringReader(message);
+            StringReader sr = new StringReader(message);
             InputSource source = new InputSource(sr);
-            parser.parse(source,this);
-
+            parser.parse(source, this);
         } catch (ParserConfigurationException e) {
-            LOG.error("Parse exception while trying to parse incoming message from flux.",e);
-
+            LOG.error("Parse exception while trying to parse incoming message from flux.", e);
         } catch (IOException e) {
-            LOG.error("IOException while trying to parse incoming message from flux.",e);
+            LOG.error("IOException while trying to parse incoming message from flux.", e);
         }
-
     }
 
 
     @Override
     public void startElement(String s, String s1, String elementName, Attributes attributes) throws SAXException {
-
         // We need to extract UUID value for FLUXReportDocument. So, Mark when the tag is found.
-        if(FLUX_REPORT_DOCUMENT_TAG.equals(elementName)){
-            isFLUXReportDocumentStart =true;
+        if (CONTAINER_TAG.equals(elementName)) {
+            isStartOfInterestedTag = true;
             LOG.debug("FLUXReportDocument tag found.");
         }
-        if(ID_TAG.equals(elementName) && isFLUXReportDocumentStart){
-            isIDStart =true;
+        if (isStartOfInterestedTag && (ID_TAG.equals(elementName) || ID_TAG_FOR_FLUX_RESPONSE.equals(elementName))) {
+            isIDStart = true;
             LOG.debug("Found ID tag inside FLUXReportDocument tag");
-            String value =attributes.getValue("schemeID");
-            if(UUID_ATTRIBUTE.equals(value)){
+            String value = attributes.getValue("schemeID");
+            if (UUID_ATTRIBUTE.equals(value)) {
                 LOG.debug("Found UUID schemeID inside ID tag");
-                isUUIDForFluxReportDocument =true;
+                isUUIDStart = true;
             }
         }
 
@@ -88,26 +111,27 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
     @Override
 
     public void endElement(String s, String s1, String element) throws SAXException {
-        if(FLUX_REPORT_DOCUMENT_TAG.equals(element)){
-            isFLUXReportDocumentStart =false;
+        if (CONTAINER_TAG.equals(element)) {
+            isStartOfInterestedTag = false;
             LOG.debug("FLUXReportDocument tag Ended.");
         }
-        if(ID_TAG.equals(element)){
-            isIDStart =false;
-            isUUIDForFluxReportDocument =false;
+        if (ID_TAG.equals(element)) {
+            isIDStart = false;
+            isUUIDStart = false;
             LOG.debug("ID tag Ended.");
         }
     }
 
     @Override
     public void characters(char[] ac, int i, int j) throws SAXException {
-        String  tmpValue = new String(ac, i, j);
+        String tmpValue = new String(ac, i, j);
         // Extract UUID value and stop parsing of further document?
-        if(isUUIDForFluxReportDocument){
+        if (isUUIDStart) {
             uuidValue = tmpValue;
             throw new UUIDSAXException("Found the required value . so, stop parsing entire document");
         }
     }
+
 
     public String getUuid() {
         return uuid;
@@ -115,11 +139,11 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-    public boolean isFLUXReportDocumentStart() {
-        return isFLUXReportDocumentStart;
+    public boolean isStartOfInterestedTag() {
+        return isStartOfInterestedTag;
     }
-    public void setFLUXReportDocumentStart(boolean FLUXReportDocumentStart) {
-        isFLUXReportDocumentStart = FLUXReportDocumentStart;
+    public void setStartOfInterestedTag(boolean startOfInterestedTag) {
+        isStartOfInterestedTag = startOfInterestedTag;
     }
     public boolean isIDStart() {
         return isIDStart;
@@ -127,11 +151,11 @@ public class SAXParserForFaFLUXMessge extends DefaultHandler {
     public void setIDStart(boolean IDStart) {
         isIDStart = IDStart;
     }
-    public boolean isUUIDForFluxReportDocument() {
-        return isUUIDForFluxReportDocument;
+    public boolean isUUIDStart() {
+        return isUUIDStart;
     }
-    public void setUUIDForFluxReportDocument(boolean UUIDForFluxReportDocument) {
-        isUUIDForFluxReportDocument = UUIDForFluxReportDocument;
+    public void setUUIDStart(boolean UUIDStart) {
+        isUUIDStart = UUIDStart;
     }
     public String getUuidValue() {
         return uuidValue;

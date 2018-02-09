@@ -10,16 +10,22 @@ details. You should have received a copy of the GNU General Public License along
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.ExchangeService;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Date;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -28,6 +34,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import lombok.extern.slf4j.Slf4j;
+import org.xml.sax.SAXException;
 
 /**
  * Created by sanera on 14/08/2017.
@@ -40,11 +47,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FluxTlMessageConsumer implements MessageListener {
 
-    private static final String FLUXFAREPORT_MESSAGE = "FLUXFAReportMessage";
-    private static final String FLUXFAQUERY_MESSAGE = "FLUXFAQueryMessage";
+    private static final String FLUXFAREPORT_MESSAGE_START_XSD_ELEMENT = "FLUXFAReportMessage";
+    private static final String FLUXFAQUERY_MESSAGE_START_XSD_ELEMENT = "FLUXFAQueryMessage";
+    private static final String FLUXRESPONSE_MESSAGE_START_XSD_ELEMENT = "FLUXResponseMessage";
+
+    private static final String exchangeUsername = "flux";
+    private static final String DF = "DF";
+    private static final String FR = "FR";
+    private static final String ON = "ON";
 
     @EJB
-    private ExchangeService exchangeService;
+    private FluxFaPluginExchangeService exchangeService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -55,31 +68,83 @@ public class FluxTlMessageConsumer implements MessageListener {
             if (textMessage == null || textMessage.getText() == null) {
                 throw new IllegalArgumentException("Message received in ERS Plugin is null.");
             }
+            final ActivityType faMessageType = extractActivityTypeFromMessage(textMessage.getText());
             exchangeService.sendFishingActivityMessageToExchange(textMessage.getText(),
-                    exchangeService.createExchangeMessagePropertiesForFluxFAReportRequest(textMessage),
-                    extractActivityTypeFromMessage(textMessage.getText()));
-            log.info("[END] Message sent successfully to exchange module.");
+                    createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, faMessageType),
+                    faMessageType);
         } catch (Exception e) {
             log.error("[ERROR] Error while trying to send Flux FAReport message to exchange", e);
         }
     }
 
 
-    public ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
+    private ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
         Reader reader = new StringReader(document);
         XMLStreamReader xml = XMLInputFactory.newFactory().createXMLStreamReader(reader);
         ActivityType type = null;
         while (xml.hasNext()) {
             int nextNodeType = xml.next();
-            if (nextNodeType == XMLStreamConstants.START_ELEMENT && FLUXFAREPORT_MESSAGE.equals(xml.getLocalName())) {
-                type = ActivityType.FA_REPORT;
-                break;
-            } else if (nextNodeType == XMLStreamConstants.START_ELEMENT && FLUXFAQUERY_MESSAGE.equals(xml.getLocalName())) {
-                type =  ActivityType.FA_QUERY;
-                break;
+            if (nextNodeType == XMLStreamConstants.START_ELEMENT) {
+                if (FLUXFAREPORT_MESSAGE_START_XSD_ELEMENT.equals(xml.getLocalName())) {
+                    type = ActivityType.FA_REPORT;
+                    break;
+                } else if (FLUXFAQUERY_MESSAGE_START_XSD_ELEMENT.equals(xml.getLocalName())) {
+                    type = ActivityType.FA_QUERY;
+                    break;
+                } else if (FLUXRESPONSE_MESSAGE_START_XSD_ELEMENT.equals(xml.getLocalName())) {
+                    type = ActivityType.FLUX_RESPONSE;
+                }
             }
         }
         xml.close();
         return type;
+    }
+
+    /**
+     * Create object with all necessary properties required to communicate with exchange
+     *
+     * @param textMessage
+     * @return
+     * @throws JMSException
+     */
+    public ExchangeMessageProperties createExchangeMessagePropertiesForFluxFAReportRequest(TextMessage textMessage, ActivityType type) throws JMSException {
+        ExchangeMessageProperties exchangeMessageProperties = new ExchangeMessageProperties();
+        exchangeMessageProperties.setUsername(exchangeUsername);
+        exchangeMessageProperties.setDate(new Date());
+        exchangeMessageProperties.setPluginType(PluginType.FLUX);
+        exchangeMessageProperties.setDFValue(extractStringPropertyFromJMSTextMessage(textMessage, DF));
+        exchangeMessageProperties.setSenderReceiver(extractStringPropertyFromJMSTextMessage(textMessage, FR));
+        exchangeMessageProperties.setOnValue(extractStringPropertyFromJMSTextMessage(textMessage, ON));
+        exchangeMessageProperties.setMessageGuid(extractMessageGuidFromInputXML(textMessage.getText(), type));
+        log.info("Properties read from the message:" + exchangeMessageProperties);
+        return exchangeMessageProperties;
+    }
+
+
+    //Extract UUID value from FLUXReportDocument as messageGuid
+    private String extractMessageGuidFromInputXML(String message, ActivityType type) {
+        String messageGuid = null;
+        SaxParserUUIDExtractor saxParserForFaFLUXMessge = new SaxParserUUIDExtractor(type);
+        try {
+            saxParserForFaFLUXMessge.parseDocument(message);
+        } catch (SAXException e) {
+            // below message would be thrown once value is found.
+            if (e instanceof UUIDSAXException)
+                log.debug("************************************************");
+            messageGuid = saxParserForFaFLUXMessge.getUuidValue();
+            log.debug("UUID found:" + messageGuid);
+            log.debug("************************************************");
+        }
+        return messageGuid;
+    }
+
+    private String extractStringPropertyFromJMSTextMessage(TextMessage textMessage, String property) {
+        String value = null;
+        try {
+            value = textMessage.getStringProperty(property);
+        } catch (JMSException e) {
+            log.error("Couldn't find the property [ " + property + " ] in JMS Text Message:" + property, e);
+        }
+        return value;
     }
 }
