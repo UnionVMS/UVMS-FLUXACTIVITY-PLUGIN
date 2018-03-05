@@ -95,6 +95,12 @@
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
             <version>${uvms.commons.version}</version>
+            <exclusions>
+                <exclusion>  <!-- declare the exclusion here -->
+                    <groupId>eu.europa.ec.fisheries.uvms</groupId>
+                    <artifactId>uvms-config</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -49,7 +49,7 @@ public class FluxFaPluginExchangeService {
                             , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
                     break;
                 default:
-                    log.error("[ERROR] The following type is not mapped or implemented : {}", activityType);
+                    log.error("[ERROR] The following type is not mapped or implemented : {}\n Original Message : {}", activityType, receivedMessage);
             }
             if (StringUtils.isNotEmpty(exchnageReqStr)) {
                 String messageId = exchangeProducer.sendModuleMessage(exchnageReqStr, null);
