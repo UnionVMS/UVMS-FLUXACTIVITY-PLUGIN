@@ -25,8 +25,8 @@
         <commons.lang.version>2.6</commons.lang.version>
         <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
-        <uvms.commons.version>3.0.9-SNAPSHOT</uvms.commons.version>
-        <exchange.model.version>4.0.10-SNAPSHOT</exchange.model.version>
+        <uvms.commons.version>3.0.12</uvms.commons.version>
+        <exchange.model.version>4.0.10</exchange.model.version>
         <jaxb-impl.version>2.2.7</jaxb-impl.version>
 		<scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
         <lombok.version>1.16.18</lombok.version>
