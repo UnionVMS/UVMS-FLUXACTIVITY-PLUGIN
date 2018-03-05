@@ -7,28 +7,15 @@ the License, or any later version. The IFDM Suite is distributed in the hope tha
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
- */
+*/
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants;
 
-public class FluxConnectionConstants {
+/**
+ * Created by kovian on 27/12/2017.
+ */
+public enum ActivityType {
 
-    private FluxConnectionConstants(){}
-
-    public static final String DESTINATION_TYPE_QUEUE                = "javax.jms.Queue";
-    public static final String FLUX_CONNECTION_FACTORY               = "java:/FluxFactory";
-
-
-    // Queue details
-    public static final String JMS_QUEUE_BRIDGE = "java:/jms/queue/bridge";
-
-
-    // Business procedure signature
-
-
-   public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAQuery";
-   public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAQuery"; // This Queue has been configured on FLUX box. We will receive FAReportMessage in this queue.
-
-
-  //   public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE_NAME = "FAPlugin";
-    // public static  final String FLUX_MESSAGE_IN_REMOTE_QUEUE = "java:/jms/queue/FAPlugin";
+    FA_REPORT,
+    FA_QUERY,
+    FLUX_RESPONSE
 }
