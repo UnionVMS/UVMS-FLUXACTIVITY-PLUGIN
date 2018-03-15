@@ -4,7 +4,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
     <artifactId>fluxActivity</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
     
@@ -25,7 +25,7 @@
         <commons.lang.version>2.6</commons.lang.version>
         <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
-        <uvms.commons.version>3.0.12</uvms.commons.version>
+        <uvms.commons.version>3.0.14</uvms.commons.version>
         <exchange.model.version>4.0.10</exchange.model.version>
         <jaxb-impl.version>2.2.7</jaxb-impl.version>
 		<scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
@@ -95,6 +95,12 @@
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
             <version>${uvms.commons.version}</version>
+            <exclusions>
+                <exclusion>  <!-- declare the exclusion here -->
+                    <groupId>eu.europa.ec.fisheries.uvms</groupId>
+                    <artifactId>uvms-config</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
