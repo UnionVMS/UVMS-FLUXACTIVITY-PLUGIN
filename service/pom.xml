@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
         <artifactId>fluxActivity</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
-            <version>3.0.14-SNAPSHOT</version>
+            <version>${uvms.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

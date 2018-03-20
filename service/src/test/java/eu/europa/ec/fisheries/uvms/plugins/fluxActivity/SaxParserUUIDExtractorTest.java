@@ -12,12 +12,13 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
 import static org.junit.Assert.assertNotNull;
 
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;

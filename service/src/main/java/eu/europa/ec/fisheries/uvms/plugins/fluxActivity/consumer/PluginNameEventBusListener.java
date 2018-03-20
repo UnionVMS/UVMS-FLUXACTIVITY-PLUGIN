@@ -1,18 +1,5 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAQueryRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAReportRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAResponseRequest;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginException;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.PluginJAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FLUXMessageProducer;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -21,6 +8,22 @@ import javax.ejb.TransactionAttributeType;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAQueryRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAReportRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAResponseRequest;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.PluginException;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.PluginJAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.FLUXMessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
@@ -129,9 +132,9 @@ public class PluginNameEventBusListener implements MessageListener {
         }
         try {
             FLUXResponseMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
-            cleanXMLMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage);
             LOG.info("Cleaned FLUXResponse :" + cleanXMLMessage);
-        } catch (PluginException e) {
+        } catch (PluginException | JAXBException e) {
             LOG.error("PluginException when trying to clean FLUXResponse", e);
         }
         return cleanXMLMessage;
@@ -145,9 +148,9 @@ public class PluginNameEventBusListener implements MessageListener {
         }
         try {
             FLUXFAReportMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(faReportMessageWrapper, FLUXFAReportMessage.class);
-            cleanXMLMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage);
             LOG.info("Cleaned FLUXFAReportMessage :" + cleanXMLMessage);
-        } catch (PluginException e) {
+        } catch (PluginException | JAXBException e) {
             LOG.error("PluginException when trying to clean FLUXFAReportMessage", e);
         }
         return cleanXMLMessage;
@@ -161,9 +164,9 @@ public class PluginNameEventBusListener implements MessageListener {
         }
         try {
             FLUXFAQueryMessage fluxResponseMessage = PluginJAXBMarshaller.unMarshallMessage(faQueryMessageWrapper, FLUXFAQueryMessage.class);
-            cleanXMLMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(fluxResponseMessage);
+            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage);
             LOG.info("Cleaned FLUXFAQueryMessage :" + cleanXMLMessage);
-        } catch (PluginException e) {
+        } catch (PluginException | JAXBException e) {
             LOG.error("PluginException when trying to clean FLUXFAQueryMessage", e);
         }
         return cleanXMLMessage;
