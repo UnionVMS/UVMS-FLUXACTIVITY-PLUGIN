@@ -107,7 +107,7 @@ public class FluxTlMessageConsumer implements MessageListener {
      * @return
      * @throws JMSException
      */
-    public ExchangeMessageProperties createExchangeMessagePropertiesForFluxFAReportRequest(TextMessage textMessage, ActivityType type) throws JMSException {
+    private ExchangeMessageProperties createExchangeMessagePropertiesForFluxFAReportRequest(TextMessage textMessage, ActivityType type) throws JMSException {
         ExchangeMessageProperties exchangeMessageProperties = new ExchangeMessageProperties();
         exchangeMessageProperties.setUsername(exchangeUsername);
         exchangeMessageProperties.setDate(new Date());
