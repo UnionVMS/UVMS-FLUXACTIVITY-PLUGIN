@@ -29,7 +29,7 @@ public class FluxFaPluginExchangeService {
 
     public void sendFishingActivityMessageToExchange(String receivedMessage, ExchangeMessageProperties prop, ActivityType activityType) {
         try {
-            log.info("[START] Preparing request of type [ " + activityType + " ] to send to exchange...");
+            log.info("[START] Preparing request of type [ " + activityType + " ] to send to exchange... With ON Flux TL Parameter : [[ " +prop.getOnValue()+ " ]]..");
             String exchnageReqStr = null;
             switch (activityType) {
                 case FA_REPORT:

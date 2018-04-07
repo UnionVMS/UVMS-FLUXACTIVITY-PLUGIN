@@ -55,12 +55,12 @@ public class FLUXMessageProducer extends AbstractProducer {
             messageProperties.put(FLUXMessageProducer.FLUX_ENV_AD, responseRequest.getDestination());
             messageProperties.put(FLUXMessageProducer.FLUX_ENV_FR, responseRequest.getSenderOrReceiver());
             messageProperties.put(FLUXMessageProducer.FLUX_ENV_DF, responseRequest.getFluxDataFlow());
-            messageProperties.put(FLUXMessageProducer.ON, responseRequest.getOnValue());
+            messageProperties.put(FLUXMessageProducer.BUSINESS_UUID, responseRequest.getOnValue());
         } else {
             log.error("PluginBaseRequest is null so, could not set AD/FR/DF values to the FLUXMEssage");
         }
         messageProperties.put(FLUXMessageProducer.FLUX_ENV_AR, "true");
-        messageProperties.put(FLUXMessageProducer.BUSINESS_UUID, createBusinessUUID());
+        messageProperties.put(FLUXMessageProducer.ON, createBusinessUUID());
         messageProperties.put(FLUXMessageProducer.FLUX_ENV_TODT, createStringDate());
         messageProperties.put(FLUXMessageProducer.FLUX_ENV_TO, "60");
         messageProperties.put(FLUXMessageProducer.FLUX_ENV_CT, "admin@dgmare.com");
@@ -73,11 +73,11 @@ public class FLUXMessageProducer extends AbstractProducer {
      *
      * @return randomUUID
      */
-    protected String createBusinessUUID() {
+    private String createBusinessUUID() {
         return UUID.randomUUID().toString();
     }
 
-    protected String createStringDate() {
+    private String createStringDate() {
         GregorianCalendar gcal = (GregorianCalendar) GregorianCalendar.getInstance();
         Date newDate = DateUtils.addHours(new Date(), 3);
         gcal.setTime(newDate);

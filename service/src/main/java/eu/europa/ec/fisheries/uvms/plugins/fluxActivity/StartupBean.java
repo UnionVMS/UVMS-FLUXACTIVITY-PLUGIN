@@ -64,7 +64,8 @@ public class StartupBean extends PluginDataHolder {
 
         capabilities = ServiceMapper.getCapabilitiesListTypeFromMap(super.getCapabilities());
         settingList = ServiceMapper.getSettingsListTypeFromMap(super.getSettings());
-        serviceType = ServiceMapper.getServiceType(getRegisterClassName(), getApplicaionName(), "A good description for the plugin", PluginType.SATELLITE_RECEIVER, getPluginResponseSubscriptionName());
+        serviceType = ServiceMapper.getServiceType(getRegisterClassName(),
+                getApplicaionName(), "Flux Plugin for accepting Fishing Activities related XML messages.", PluginType.SATELLITE_RECEIVER, getPluginResponseSubscriptionName());
         register();
 
         log.debug("Settings updated in plugin {}", registeredClassName);
@@ -81,7 +82,10 @@ public class StartupBean extends PluginDataHolder {
     private void populateFluxParameters() {
         fluxParameters = new FluxParameters();
         Properties plugProps = super.getPluginApplicaitonProperties();
-        fluxParameters.populate((String) plugProps.get("provider.url"), (String) plugProps.get("security.principal.id"), (String) plugProps.get("security.principal.pwd"));
+        fluxParameters.populate(
+                (String)plugProps.get("provider.url"),
+                (String)plugProps.get("security.principal.id"),
+                (String)plugProps.get("security.principal.pwd"));
     }
 
     @PreDestroy
@@ -105,7 +109,7 @@ public class StartupBean extends PluginDataHolder {
             String registerServiceRequest = ExchangeModuleRequestMapper.createRegisterServiceRequest(serviceType, capabilities, settingList);
             messageProducer.sendEventBusMessage(registerServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE, e);
+            log.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
             setWaitingForResponse(false);
         }
     }
@@ -116,25 +120,25 @@ public class StartupBean extends PluginDataHolder {
             String unregisterServiceRequest = ExchangeModuleRequestMapper.createUnregisterServiceRequest(serviceType);
             messageProducer.sendEventBusMessage(unregisterServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE, e);
+            log.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
         }
     }
 
-    public String getPLuginApplicationProperty(String key) {
+    private String getPLuginApplicationProperty(String key) {
         try {
             return (String) super.getPluginApplicaitonProperties().get(key);
         } catch (Exception e) {
-            log.error("Failed to getSetting for key: " + key, getRegisterClassName(), e);
+            log.error("Failed to getSetting for key: " + key, getRegisterClassName(),e);
             return null;
         }
     }
 
-    public String getSetting(String key) {
+    private String getSetting(String key) {
         try {
             log.debug("Trying to get setting {} ", registeredClassName + "." + key);
             return super.getSettings().get(registeredClassName + "." + key);
         } catch (Exception e) {
-            log.error("Failed to getSetting for key: " + key, registeredClassName, e);
+            log.error("Failed to getSetting for key: " + key, registeredClassName,e);
             return null;
         }
     }
@@ -142,25 +146,35 @@ public class StartupBean extends PluginDataHolder {
     public String getPluginResponseSubscriptionName() {
         return getRegisterClassName() + getSetting("application.responseTopicName");
     }
-
+    public String getResponseTopicMessageName() {
+        return getSetting("application.groupid");
+    }
     public String getRegisterClassName() {
         return registeredClassName;
     }
-
-    public String getApplicaionName() {
-        return getSetting("application.name");
+    private String getApplicaionName() {
+        return getPLuginApplicationProperty("application.name");
     }
-
+    public boolean isWaitingForResponse() {
+        return waitingForResponse;
+    }
     public void setWaitingForResponse(boolean waitingForResponse) {
         this.waitingForResponse = waitingForResponse;
     }
-
+    public boolean isIsRegistered() {
+        return isRegistered;
+    }
     public void setIsRegistered(boolean isRegistered) {
         this.isRegistered = isRegistered;
     }
-
+    public boolean isIsEnabled() {
+        return isEnabled;
+    }
     public void setIsEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
+    }
+    public FluxParameters getFluxParameters() {
+        return fluxParameters;
     }
 
 }
