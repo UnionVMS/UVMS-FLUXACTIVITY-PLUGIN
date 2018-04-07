@@ -1,5 +1,15 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.Map;
+import java.util.Properties;
+
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
@@ -11,15 +21,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.ServiceMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToEventBusTopicProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FileHandlerBean;
-import java.util.Map;
-import java.util.Properties;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,9 +64,7 @@ public class StartupBean extends PluginDataHolder {
 
         capabilities = ServiceMapper.getCapabilitiesListTypeFromMap(super.getCapabilities());
         settingList = ServiceMapper.getSettingsListTypeFromMap(super.getSettings());
-        serviceType = ServiceMapper.getServiceType(getRegisterClassName(), getApplicaionName(), "A good description for the plugin",
-                PluginType.SATELLITE_RECEIVER,
-                getPluginResponseSubscriptionName());
+        serviceType = ServiceMapper.getServiceType(getRegisterClassName(), getApplicaionName(), "A good description for the plugin", PluginType.SATELLITE_RECEIVER, getPluginResponseSubscriptionName());
         register();
 
         log.debug("Settings updated in plugin {}", registeredClassName);
@@ -82,10 +81,7 @@ public class StartupBean extends PluginDataHolder {
     private void populateFluxParameters() {
         fluxParameters = new FluxParameters();
         Properties plugProps = super.getPluginApplicaitonProperties();
-        fluxParameters.populate(
-                (String)plugProps.get("provider.url"),
-                (String)plugProps.get("security.principal.id"),
-                (String)plugProps.get("security.principal.pwd"));
+        fluxParameters.populate((String) plugProps.get("provider.url"), (String) plugProps.get("security.principal.id"), (String) plugProps.get("security.principal.pwd"));
     }
 
     @PreDestroy
@@ -109,7 +105,7 @@ public class StartupBean extends PluginDataHolder {
             String registerServiceRequest = ExchangeModuleRequestMapper.createRegisterServiceRequest(serviceType, capabilities, settingList);
             messageProducer.sendEventBusMessage(registerServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
+            log.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE, e);
             setWaitingForResponse(false);
         }
     }
@@ -120,7 +116,7 @@ public class StartupBean extends PluginDataHolder {
             String unregisterServiceRequest = ExchangeModuleRequestMapper.createUnregisterServiceRequest(serviceType);
             messageProducer.sendEventBusMessage(unregisterServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
+            log.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE, e);
         }
     }
 
@@ -128,7 +124,7 @@ public class StartupBean extends PluginDataHolder {
         try {
             return (String) super.getPluginApplicaitonProperties().get(key);
         } catch (Exception e) {
-            log.error("Failed to getSetting for key: " + key, getRegisterClassName(),e);
+            log.error("Failed to getSetting for key: " + key, getRegisterClassName(), e);
             return null;
         }
     }
@@ -138,7 +134,7 @@ public class StartupBean extends PluginDataHolder {
             log.debug("Trying to get setting {} ", registeredClassName + "." + key);
             return super.getSettings().get(registeredClassName + "." + key);
         } catch (Exception e) {
-            log.error("Failed to getSetting for key: " + key, registeredClassName,e);
+            log.error("Failed to getSetting for key: " + key, registeredClassName, e);
             return null;
         }
     }
@@ -146,35 +142,25 @@ public class StartupBean extends PluginDataHolder {
     public String getPluginResponseSubscriptionName() {
         return getRegisterClassName() + getSetting("application.responseTopicName");
     }
-    public String getResponseTopicMessageName() {
-        return getSetting("application.groupid");
-    }
+
     public String getRegisterClassName() {
         return registeredClassName;
     }
+
     public String getApplicaionName() {
         return getSetting("application.name");
     }
-    public boolean isWaitingForResponse() {
-        return waitingForResponse;
-    }
+
     public void setWaitingForResponse(boolean waitingForResponse) {
         this.waitingForResponse = waitingForResponse;
     }
-    public boolean isIsRegistered() {
-        return isRegistered;
-    }
+
     public void setIsRegistered(boolean isRegistered) {
         this.isRegistered = isRegistered;
     }
-    public boolean isIsEnabled() {
-        return isEnabled;
-    }
+
     public void setIsEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
-    }
-    public FluxParameters getFluxParameters() {
-        return fluxParameters;
     }
 
 }

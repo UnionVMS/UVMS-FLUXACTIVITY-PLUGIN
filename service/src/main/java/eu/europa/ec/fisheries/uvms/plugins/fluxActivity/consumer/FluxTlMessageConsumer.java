@@ -8,18 +8,9 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
  */
+
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Date;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -33,12 +24,19 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Date;
+
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
 import lombok.extern.slf4j.Slf4j;
 import org.xml.sax.SAXException;
 
-/**
- * Created by sanera on 14/08/2017.
- */
 @MessageDriven(mappedName = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN_NAME),
@@ -76,7 +74,6 @@ public class FluxTlMessageConsumer implements MessageListener {
             log.error("[ERROR] Error while trying to send Flux FAReport message to exchange", e);
         }
     }
-
 
     private ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
         Reader reader = new StringReader(document);
@@ -120,7 +117,6 @@ public class FluxTlMessageConsumer implements MessageListener {
         return exchangeMessageProperties;
     }
 
-
     //Extract UUID value from FLUXReportDocument as messageGuid
     private String extractMessageGuidFromInputXML(String message, ActivityType type) {
         String messageGuid = null;
@@ -128,12 +124,7 @@ public class FluxTlMessageConsumer implements MessageListener {
         try {
             saxParserForFaFLUXMessge.parseDocument(message);
         } catch (SAXException e) {
-            // below message would be thrown once value is found.
-            if (e instanceof UUIDSAXException)
-                log.debug("************************************************");
             messageGuid = saxParserForFaFLUXMessge.getUuidValue();
-            log.debug("UUID found:" + messageGuid);
-            log.debug("************************************************");
         }
         return messageGuid;
     }

@@ -8,14 +8,17 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
  */
+
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser;
 
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import java.io.IOException;
-import java.io.StringReader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+import java.io.StringReader;
+
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.UUIDSAXException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -39,7 +42,6 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
     private static final String ID_TAG_FOR_FLUX_RESPONSE = "ID";
     private static final String UUID_ATTRIBUTE = "UUID";
 
-    private String uuid;
     private boolean isStartOfInterestedTag;
     private boolean isIDStart;
     private boolean isUUIDStart;
@@ -47,11 +49,6 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
 
     // Three case here : FaReportMessage, FaQueryMessage, FLUXResponseMessage
     private String CONTAINER_TAG;
-
-
-    private SaxParserUUIDExtractor(){
-        super();
-    }
 
     public SaxParserUUIDExtractor(ActivityType type){
         switch (type){
@@ -88,7 +85,6 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
         }
     }
 
-
     @Override
     public void startElement(String s, String s1, String elementName, Attributes attributes) throws SAXException {
         // We need to extract UUID value for FLUXReportDocument. So, Mark when the tag is found.
@@ -105,11 +101,9 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
                 isUUIDStart = true;
             }
         }
-
     }
 
     @Override
-
     public void endElement(String s, String s1, String element) throws SAXException {
         if (CONTAINER_TAG.equals(element)) {
             isStartOfInterestedTag = false;
@@ -132,35 +126,7 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
         }
     }
 
-
-    public String getUuid() {
-        return uuid;
-    }
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-    public boolean isStartOfInterestedTag() {
-        return isStartOfInterestedTag;
-    }
-    public void setStartOfInterestedTag(boolean startOfInterestedTag) {
-        isStartOfInterestedTag = startOfInterestedTag;
-    }
-    public boolean isIDStart() {
-        return isIDStart;
-    }
-    public void setIDStart(boolean IDStart) {
-        isIDStart = IDStart;
-    }
-    public boolean isUUIDStart() {
-        return isUUIDStart;
-    }
-    public void setUUIDStart(boolean UUIDStart) {
-        isUUIDStart = UUIDStart;
-    }
     public String getUuidValue() {
         return uuidValue;
-    }
-    public void setUuidValue(String uuidValue) {
-        this.uuidValue = uuidValue;
     }
 }

@@ -18,7 +18,7 @@ import java.io.PrintStream;
 
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.UUIDSAXException;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
