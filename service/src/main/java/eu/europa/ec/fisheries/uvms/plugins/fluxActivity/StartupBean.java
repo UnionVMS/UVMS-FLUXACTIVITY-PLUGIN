@@ -1,5 +1,15 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.Map;
+import java.util.Properties;
+
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
@@ -11,15 +21,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.ServiceMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToEventBusTopicProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FileHandlerBean;
-import java.util.Map;
-import java.util.Properties;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.DependsOn;
-import javax.ejb.EJB;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,9 +65,7 @@ public class StartupBean extends PluginDataHolder {
         capabilities = ServiceMapper.getCapabilitiesListTypeFromMap(super.getCapabilities());
         settingList = ServiceMapper.getSettingsListTypeFromMap(super.getSettings());
         serviceType = ServiceMapper.getServiceType(getRegisterClassName(),
-                getApplicaionName(), "Flux Plugin for accepting Fishing Activities related XML messages.",
-                PluginType.SATELLITE_RECEIVER,
-                getPluginResponseSubscriptionName());
+                getApplicaionName(), "Flux Plugin for accepting Fishing Activities related XML messages.", PluginType.SATELLITE_RECEIVER, getPluginResponseSubscriptionName());
         register();
 
         log.debug("Settings updated in plugin {}", registeredClassName);

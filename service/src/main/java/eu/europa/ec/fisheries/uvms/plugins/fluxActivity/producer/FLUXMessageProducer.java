@@ -8,27 +8,26 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer;
 
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 
-/**
- * Created by sanera on 14/08/2017.
- */
 @Stateless
 @LocalBean
 @Slf4j
@@ -45,12 +44,10 @@ public class FLUXMessageProducer extends AbstractProducer {
     private static final String FLUX_ENV_VB = "VB";
     private static final String ON = "ON";
 
-
     @Override
     public String getDestinationName() {
         return MessageConstants.QUEUE_PLUGIN_BRIDGE;
     }
-
 
     public Map<String, String> getFLUXMessageProperties(PluginBaseRequest responseRequest) {
         Map<String, String> messageProperties = new HashMap<>();
@@ -70,7 +67,6 @@ public class FLUXMessageProducer extends AbstractProducer {
         messageProperties.put(FLUXMessageProducer.FLUX_ENV_VB, "ERROR");
         return messageProperties;
     }
-
 
     /**
      * BUSINESS_UUID has a prefix, a date-time combination and a serial - thus it is semi unique
@@ -94,6 +90,4 @@ public class FLUXMessageProducer extends AbstractProducer {
             return null;
         }
     }
-
-
 }

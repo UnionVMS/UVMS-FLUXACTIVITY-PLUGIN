@@ -1,8 +1,5 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants;
 
-/**
- * Created by kovian on 28/10/2016.
- */
 public class ActivityPluginConstatns {
 
     private ActivityPluginConstatns(){

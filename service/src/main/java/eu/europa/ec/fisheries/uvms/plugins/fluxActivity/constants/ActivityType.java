@@ -8,13 +8,10 @@ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants;
 
-/**
- * Created by kovian on 27/12/2017.
- */
 public enum ActivityType {
-
     FA_REPORT,
     FA_QUERY,
     FLUX_RESPONSE
