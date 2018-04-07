@@ -172,18 +172,4 @@ public class PluginNameEventBusListener implements MessageListener {
         return cleanXMLMessage;
     }
 
-/*    private String cleanFLUXResponseMessage(String rawMsg, Class<?> clazz) {
-        String cleanXMLMessage = null;
-        if (rawMsg == null) {
-            LOG.error("fluxFAResponse received in clean method is null");
-            return null;
-        }
-        try {
-            cleanXMLMessage = PluginJAXBMarshaller.marshallJaxBObjectToString(PluginJAXBMarshaller.unMarshallMessage(rawMsg, clazz.getClass()));
-            LOG.info("Cleaned FLUXResponse :" + cleanXMLMessage);
-        } catch (PluginException e) {
-            LOG.error("PluginException when trying to clean FLUXResponseMessage", e);
-        }
-        return cleanXMLMessage;
-    }*/
 }

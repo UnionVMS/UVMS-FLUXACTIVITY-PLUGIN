@@ -63,7 +63,8 @@ public class StartupBean extends PluginDataHolder {
 
         capabilities = ServiceMapper.getCapabilitiesListTypeFromMap(super.getCapabilities());
         settingList = ServiceMapper.getSettingsListTypeFromMap(super.getSettings());
-        serviceType = ServiceMapper.getServiceType(getRegisterClassName(), getApplicaionName(), "A good description for the plugin",
+        serviceType = ServiceMapper.getServiceType(getRegisterClassName(),
+                getApplicaionName(), "Flux Plugin for accepting Fishing Activities related XML messages.",
                 PluginType.SATELLITE_RECEIVER,
                 getPluginResponseSubscriptionName());
         register();
@@ -124,7 +125,7 @@ public class StartupBean extends PluginDataHolder {
         }
     }
 
-    public String getPLuginApplicationProperty(String key) {
+    private String getPLuginApplicationProperty(String key) {
         try {
             return (String) super.getPluginApplicaitonProperties().get(key);
         } catch (Exception e) {
@@ -133,7 +134,7 @@ public class StartupBean extends PluginDataHolder {
         }
     }
 
-    public String getSetting(String key) {
+    private String getSetting(String key) {
         try {
             log.debug("Trying to get setting {} ", registeredClassName + "." + key);
             return super.getSettings().get(registeredClassName + "." + key);
@@ -152,8 +153,8 @@ public class StartupBean extends PluginDataHolder {
     public String getRegisterClassName() {
         return registeredClassName;
     }
-    public String getApplicaionName() {
-        return getSetting("application.name");
+    private String getApplicaionName() {
+        return getPLuginApplicationProperty("application.name");
     }
     public boolean isWaitingForResponse() {
         return waitingForResponse;
