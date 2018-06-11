@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.io.PrintStream;
 
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.UUIDSAXException;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.UUIDSAXException;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -34,13 +35,15 @@ public class SaxParserUUIDExtractorTest {
     private SaxParserUUIDExtractor faReportUuidExtractor;
     private SaxParserUUIDExtractor faResponseUuidExtractor;
 
-    private String faQueryTestXmlPath = "src/test/resources/testData/fluxFaQueryMessage.xml";
-    private String faReportTestXmlPath = "src/test/resources/testData/fluxFaReportMessage.xml";
-    private String fluxResponseTestXmlPath = "src/test/resources/testData/fluxResponseMessage.xml";
+    private String FAQUERYTESTXMLPATH = "src/test/resources/testData/fluxFaQueryMessage.xml";
+    private String FAREPORTTESTXMLPATH = "src/test/resources/testData/fluxFaReportMessage.xml";
+    private String FLUXRESPONSETESTXMLPATH = "src/test/resources/testData/fluxResponseMessage.xml";
+    private String MOVEMNT_XML_PATH = "src/test/resources/testData/movementExample.xml";
 
     private String faQuerySample;
     private String faReportSample;
     private String fluxResponseSample;
+    private String movementExample;
 
     PrintStream logger = System.out;
 
@@ -51,9 +54,25 @@ public class SaxParserUUIDExtractorTest {
         faReportUuidExtractor = new SaxParserUUIDExtractor(ActivityType.FA_REPORT);
         faResponseUuidExtractor = new SaxParserUUIDExtractor(ActivityType.FLUX_RESPONSE);
 
-        faQuerySample = getFileAsString(faQueryTestXmlPath);
-        faReportSample = getFileAsString(faReportTestXmlPath);
-        fluxResponseSample = getFileAsString(fluxResponseTestXmlPath);
+        faQuerySample = getFileAsString(FAQUERYTESTXMLPATH);
+        faReportSample = getFileAsString(FAREPORTTESTXMLPATH);
+        fluxResponseSample = getFileAsString(FLUXRESPONSETESTXMLPATH);
+        movementExample = getFileAsString(MOVEMNT_XML_PATH);
+    }
+
+    @Test
+    public void testWrongDocument(){
+        String messageGuid = null;
+        try {
+            faReportUuidExtractor.parseDocument(movementExample);
+        } catch (SAXException e) {
+            // below message would be thrown once value is found.
+            if (e instanceof UUIDSAXException){
+                messageGuid = faQueryUuidExtractor.getUuidValue();
+            }
+        }
+        logger.println("FaQuery GUID : " + messageGuid);
+        assertNull(messageGuid);
     }
 
     @Test

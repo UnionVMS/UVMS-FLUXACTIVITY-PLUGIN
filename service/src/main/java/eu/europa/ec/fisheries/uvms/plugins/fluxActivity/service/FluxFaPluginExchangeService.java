@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -11,15 +16,9 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToExchangeProducer;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @author jojoha
- */
 @LocalBean
 @Stateless
 @Slf4j
@@ -47,6 +46,12 @@ public class FluxFaPluginExchangeService {
                     exchnageReqStr = ExchangeModuleRequestMapper.createFluxResponseRequest(receivedMessage, prop.getUsername()
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
                             , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                    break;
+                case UNKNOWN:
+                    exchnageReqStr = ExchangeModuleRequestMapper.createFARequestForUnknownType(receivedMessage, prop.getUsername()
+                            , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                    log.error("[ERROR] UNKNOWN Type of message was received. Transmitting to Exchange for logging..");
                     break;
                 default:
                     log.error("[ERROR] The following type is not mapped or implemented : {}\n Original Message : {}", activityType, receivedMessage);
