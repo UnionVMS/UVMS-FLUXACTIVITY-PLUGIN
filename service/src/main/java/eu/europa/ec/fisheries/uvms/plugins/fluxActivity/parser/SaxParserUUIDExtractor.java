@@ -61,6 +61,9 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
             case FLUX_RESPONSE:
                 CONTAINER_TAG = FLUX_RESPONSE_UUID_CONTAINER_TAG;
                 break;
+            case UNKNOWN:
+                CONTAINER_TAG = FLUX_RESPONSE_UUID_CONTAINER_TAG;
+                break;
         }
     }
 
@@ -104,7 +107,7 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String s, String s1, String element) throws SAXException {
+    public void endElement(String s, String s1, String element) {
         if (CONTAINER_TAG.equals(element)) {
             isStartOfInterestedTag = false;
             LOG.debug("FLUXReportDocument tag Ended.");

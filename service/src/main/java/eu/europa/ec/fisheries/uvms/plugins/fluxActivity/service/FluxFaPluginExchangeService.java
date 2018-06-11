@@ -47,6 +47,12 @@ public class FluxFaPluginExchangeService {
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
                             , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
                     break;
+                case UNKNOWN:
+                    exchnageReqStr = ExchangeModuleRequestMapper.createFARequestForUnknownType(receivedMessage, prop.getUsername()
+                            , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                    log.error("[ERROR] UNKNOWN Type of message was received. Transmitting to Exchange for logging..");
+                    break;
                 default:
                     log.error("[ERROR] The following type is not mapped or implemented : {}\n Original Message : {}", activityType, receivedMessage);
             }
