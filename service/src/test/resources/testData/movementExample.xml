@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:FLUXVesselPositionMessage xmlns:rsm="urn:un:unece:uncefact:data:standard:FLUXVesselPositionMessage:4"
+                               xmlns="urn:xeu:connector-bridge:v1"
+                               xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:18"
+                               xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:18"
+                               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                               xsi:schemaLocation="urn:un:unece:uncefact:data:standard:FLUXVesselPositionMessage:4 FLUXVesselPositionMessage_4p0.xsd">
+    <rsm:FLUXReportDocument>
+        <ram:ID schemeID="UUID">C45A1C7F-335E-4302-9495-2C41C721D372</ram:ID>
+        <ram:CreationDateTime>
+            <udt:DateTime>2017-03-05T19:50:00Z</udt:DateTime>
+        </ram:CreationDateTime>
+        <ram:PurposeCode>9</ram:PurposeCode>
+        <ram:OwnerFLUXParty>
+            <ram:ID>EST</ram:ID>
+        </ram:OwnerFLUXParty>
+    </rsm:FLUXReportDocument>
+    <rsm:VesselTransportMeans>
+        <ram:ID schemeID="CFR">AUT12346789</ram:ID>
+        <ram:ID schemeID="EXT_MARKING">FIN-1114-U</ram:ID>
+        <ram:ID schemeID="IRCS">IRCS0</ram:ID>
+        <ram:RegistrationVesselCountry>
+            <ram:ID>EST</ram:ID>
+        </ram:RegistrationVesselCountry>
+        <ram:SpecifiedVesselPositionEvent>
+            <ram:ObtainedOccurrenceDateTime>
+                <udt:DateTime>2017-03-04T17:38:00Z</udt:DateTime>
+            </ram:ObtainedOccurrenceDateTime>
+            <ram:TypeCode>POS</ram:TypeCode>
+            <ram:SpeedValueMeasure>7.8</ram:SpeedValueMeasure>
+            <ram:CourseValueMeasure>282</ram:CourseValueMeasure>
+            <ram:SpecifiedVesselGeographicalCoordinate>
+                <ram:LatitudeMeasure>55.6880000000</ram:LatitudeMeasure>
+                <ram:LongitudeMeasure>15.5240000000</ram:LongitudeMeasure>
+            </ram:SpecifiedVesselGeographicalCoordinate>
+        </ram:SpecifiedVesselPositionEvent>
+    </rsm:VesselTransportMeans>
+</rsm:FLUXVesselPositionMessage>

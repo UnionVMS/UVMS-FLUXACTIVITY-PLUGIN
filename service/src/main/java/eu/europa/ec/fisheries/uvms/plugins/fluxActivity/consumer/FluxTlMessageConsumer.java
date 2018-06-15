@@ -35,7 +35,10 @@ import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
+
+import static eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType.UNKNOWN;
 
 @MessageDriven(mappedName = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
@@ -72,10 +75,17 @@ public class FluxTlMessageConsumer implements MessageListener {
                     faMessageType);
         } catch (Exception e) {
             log.error("[ERROR] Error while trying to send Flux FAReport message to exchange", e);
+            try {
+                exchangeService.sendFishingActivityMessageToExchange(textMessage.getText(),
+                        createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, UNKNOWN),
+                        UNKNOWN);
+            } catch (JMSException e1) {
+                log.error("[FATAL] Error while trying to send Flux FAReport message to exchange", e);
+            }
         }
     }
 
-    private ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
+    public ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
         Reader reader = new StringReader(document);
         XMLStreamReader xml = XMLInputFactory.newFactory().createXMLStreamReader(reader);
         ActivityType type = null;
@@ -94,7 +104,7 @@ public class FluxTlMessageConsumer implements MessageListener {
             }
         }
         xml.close();
-        return type;
+        return type != null ? type : UNKNOWN;
     }
 
     /**
@@ -112,7 +122,7 @@ public class FluxTlMessageConsumer implements MessageListener {
         exchangeMessageProperties.setDFValue(extractStringPropertyFromJMSTextMessage(textMessage, DF));
         exchangeMessageProperties.setSenderReceiver(extractStringPropertyFromJMSTextMessage(textMessage, FR));
         exchangeMessageProperties.setOnValue(extractStringPropertyFromJMSTextMessage(textMessage, ON));
-        exchangeMessageProperties.setMessageGuid(extractMessageGuidFromInputXML(textMessage.getText(), type));
+        exchangeMessageProperties.setMessageGuid(type != UNKNOWN ? extractMessageGuidFromInputXML(textMessage.getText(), type) : StringUtils.EMPTY);
         log.info("Properties read from the message:" + exchangeMessageProperties);
         return exchangeMessageProperties;
     }
@@ -123,7 +133,7 @@ public class FluxTlMessageConsumer implements MessageListener {
         SaxParserUUIDExtractor saxParserForFaFLUXMessge = new SaxParserUUIDExtractor(type);
         try {
             saxParserForFaFLUXMessge.parseDocument(message);
-        } catch (SAXException e) {
+        } catch (SAXException | NullPointerException e) {
             messageGuid = saxParserForFaFLUXMessge.getUuidValue();
         }
         return messageGuid;
