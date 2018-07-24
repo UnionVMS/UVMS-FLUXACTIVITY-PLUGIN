@@ -100,6 +100,7 @@ public class FluxTlMessageConsumer implements MessageListener {
                     break;
                 } else if (FLUXRESPONSE_MESSAGE_START_XSD_ELEMENT.equals(xml.getLocalName())) {
                     type = ActivityType.FLUX_RESPONSE;
+                    break;
                 }
             }
         }
