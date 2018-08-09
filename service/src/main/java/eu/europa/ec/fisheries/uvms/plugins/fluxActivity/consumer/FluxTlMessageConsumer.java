@@ -11,6 +11,8 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
+import static eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType.UNKNOWN;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -38,8 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
-import static eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType.UNKNOWN;
-
 @MessageDriven(mappedName = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN_NAME),
@@ -56,6 +56,8 @@ public class FluxTlMessageConsumer implements MessageListener {
     private static final String DF = "DF";
     private static final String FR = "FR";
     private static final String ON = "ON";
+    private static final String TO = "TO";
+    private static final String TODT = "TODT";
 
     @EJB
     private FluxFaPluginExchangeService exchangeService;
@@ -121,6 +123,8 @@ public class FluxTlMessageConsumer implements MessageListener {
         exchangeMessageProperties.setDate(new Date());
         exchangeMessageProperties.setPluginType(PluginType.FLUX);
         exchangeMessageProperties.setDFValue(extractStringPropertyFromJMSTextMessage(textMessage, DF));
+        exchangeMessageProperties.setTo(extractStringPropertyFromJMSTextMessage(textMessage, TO));
+        exchangeMessageProperties.setTodt(extractStringPropertyFromJMSTextMessage(textMessage, TODT));
         exchangeMessageProperties.setSenderReceiver(extractStringPropertyFromJMSTextMessage(textMessage, FR));
         exchangeMessageProperties.setOnValue(extractStringPropertyFromJMSTextMessage(textMessage, ON));
         exchangeMessageProperties.setMessageGuid(type != UNKNOWN ? extractMessageGuidFromInputXML(textMessage.getText(), type) : StringUtils.EMPTY);

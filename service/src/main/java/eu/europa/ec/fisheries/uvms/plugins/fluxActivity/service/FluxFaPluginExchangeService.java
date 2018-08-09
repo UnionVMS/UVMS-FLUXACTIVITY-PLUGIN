@@ -35,22 +35,22 @@ public class FluxFaPluginExchangeService {
                 case FA_REPORT:
                     exchnageReqStr = ExchangeModuleRequestMapper.createFluxFAReportRequest(receivedMessage, prop.getUsername()
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
-                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue(), prop.getTodt(), prop.getTo());
                     break;
                 case FA_QUERY:
                     exchnageReqStr = ExchangeModuleRequestMapper.createFaQueryRequest(receivedMessage, prop.getUsername()
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
-                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue(), prop.getTodt(), prop.getTo());
                     break;
                 case FLUX_RESPONSE:
                     exchnageReqStr = ExchangeModuleRequestMapper.createFluxResponseRequest(receivedMessage, prop.getUsername()
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
-                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue(), prop.getTodt(), prop.getTo());
                     break;
                 case UNKNOWN:
                     exchnageReqStr = ExchangeModuleRequestMapper.createFARequestForUnknownType(receivedMessage, prop.getUsername()
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
-                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue());
+                            , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue(), prop.getTodt(), prop.getTo());
                     log.error("[ERROR] UNKNOWN Type of message was received. Transmitting to Exchange for logging..");
                     break;
                 default:
