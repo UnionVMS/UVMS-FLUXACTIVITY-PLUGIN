@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
-    <artifactId>fluxActivity</artifactId>
+    <artifactId>flux-activity-plugin</artifactId>
     <version>1.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
-    
+
     <properties>
         <maven.release.plugin.version>2.5.2</maven.release.plugin.version>
         <maven.scm.provider.version>2.1.1</maven.scm.provider.version>
@@ -21,17 +22,22 @@
         <audit.model.version>2.0.3</audit.model.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-		<activity.model>1.0.7</activity.model>
+        <activity.model>1.0.7</activity.model>
         <commons.lang.version>2.6</commons.lang.version>
         <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
         <uvms.commons.version>3.0.19</uvms.commons.version>
         <exchange.model.version>4.0.20</exchange.model.version>
+        <!-- Dependencies needed just for the testing WS -->
+        <connector-bridge.client.version>2.0.1</connector-bridge.client.version>
+        <bridge-connector.client.version>2.0.1</bridge-connector.client.version>
         <jaxb-impl.version>2.2.7</jaxb-impl.version>
-		<scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
+        <!-- /Dependencies needed just for the testing WS -->
+        <jbossws.api.version>1.0.2.Final</jbossws.api.version>
+        <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
         <lombok.version>1.16.18</lombok.version>
     </properties>
-   
+
     <dependencies>
 
         <dependency>
@@ -39,14 +45,14 @@
             <artifactId>jaxb-impl</artifactId>
             <version>${jaxb-impl.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>${javaee.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- TEST -->
         <dependency>
             <groupId>junit</groupId>
@@ -60,7 +66,7 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- LOGGING DEPENDENCIES -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -77,7 +83,7 @@
             <artifactId>logback-core</artifactId>
             <version>${logback.core.version}</version>
         </dependency>
-    
+
         <!-- Model dependencies -->
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
@@ -85,10 +91,10 @@
             <version>${exchange.model.version}</version>
         </dependency>
 
-	    <dependency>
-                <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
-                <artifactId>activity-model</artifactId>
-                <version>${activity.model}</version>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
+            <artifactId>activity-model</artifactId>
+            <version>${activity.model}</version>
         </dependency>
 
         <dependency>
@@ -109,9 +115,29 @@
             <version>${lombok.version}</version>
         </dependency>
 
+        <!-- Dependencies needed just for the testing WS -->
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.service.client</groupId>
+            <artifactId>connector-bridge-client</artifactId>
+            <version>${connector-bridge.client.version}</version>
+        </dependency>
+        <!-- incoming messages from FLUX -->
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.service.client</groupId>
+            <artifactId>bridge-connector-client</artifactId>
+            <version>${bridge-connector.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-api</artifactId>
+            <version>${jbossws.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- /Dependencies needed just for the testing WS -->
+
     </dependencies>
-	
-	<distributionManagement>
+
+    <distributionManagement>
         <repository>
             <id>focus-releases</id>
             <name>UnionVms Repository</name>
@@ -128,9 +154,18 @@
         <connection>${scm.connection}</connection>
         <tag>HEAD</tag>
     </scm>
-	
-	<profiles>
-		<profile>
+
+    <profiles>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+        <profile>
             <id>dg-mare</id>
             <distributionManagement>
                 <repository>
@@ -146,11 +181,13 @@
             </distributionManagement>
 
             <properties>
-                <scm.connection>scm:git:https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
+                <scm.connection>
+                    scm:git:https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-FLUXACTIVITY-PLUGIN.git
+                </scm.connection>
             </properties>
         </profile>
     </profiles>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -171,14 +208,34 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9</version>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
+                            <configuration>
+                                <additionalparam>${javadoc.opts}</additionalparam>
+                            </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <reportPlugins>
+                            <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-javadoc-plugin</artifactId>
+                                <configuration>
+                                    <additionalparam>${javadoc.opts}</additionalparam>
+                                </configuration>
+                            </plugin>
+                        </reportPlugins>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -207,9 +264,9 @@
             </plugin>
         </plugins>
     </build>
-    
-  <modules>
-    <module>service</module>
-    <module>module</module>
-  </modules>
+
+    <modules>
+        <module>service</module>
+        <module>module</module>
+    </modules>
 </project>

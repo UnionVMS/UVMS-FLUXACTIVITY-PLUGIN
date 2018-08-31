@@ -49,22 +49,22 @@ public class FLUXMessageProducer extends AbstractProducer {
         return MessageConstants.QUEUE_PLUGIN_BRIDGE;
     }
 
-    public Map<String, String> getFLUXMessageProperties(PluginBaseRequest responseRequest) {
+    public Map<String, String> getFLUXMessageProperties(PluginBaseRequest pluginReq) {
         Map<String, String> messageProperties = new HashMap<>();
-        if (responseRequest != null) {
-            messageProperties.put(FLUXMessageProducer.FLUX_ENV_AD, responseRequest.getDestination());
-            messageProperties.put(FLUXMessageProducer.FLUX_ENV_FR, responseRequest.getSenderOrReceiver());
-            messageProperties.put(FLUXMessageProducer.FLUX_ENV_DF, responseRequest.getFluxDataFlow());
-            messageProperties.put(FLUXMessageProducer.BUSINESS_UUID, responseRequest.getOnValue());
+        if (pluginReq != null) {
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_AD, pluginReq.getDestination());
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_FR, pluginReq.getSenderOrReceiver());
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_DF, pluginReq.getFluxDataFlow());
+            messageProperties.put(FLUXMessageProducer.BUSINESS_UUID, pluginReq.getOnValue());
+            messageProperties.put(FLUXMessageProducer.ON, createBusinessUUID());
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_TODT, createStringDate());
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_AR, "true");
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_TO, "60");
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_CT, "admin@dgmare.com");
+            messageProperties.put(FLUXMessageProducer.FLUX_ENV_VB, "ERROR");
         } else {
             log.error("PluginBaseRequest is null so, could not set AD/FR/DF values to the FLUXMEssage");
         }
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_AR, "true");
-        messageProperties.put(FLUXMessageProducer.ON, createBusinessUUID());
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_TODT, createStringDate());
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_TO, "60");
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_CT, "admin@dgmare.com");
-        messageProperties.put(FLUXMessageProducer.FLUX_ENV_VB, "ERROR");
         return messageProperties;
     }
 

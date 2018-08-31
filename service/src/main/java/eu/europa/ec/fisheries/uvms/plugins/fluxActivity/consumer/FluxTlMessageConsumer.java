@@ -73,14 +73,12 @@ public class FluxTlMessageConsumer implements MessageListener {
             }
             final ActivityType faMessageType = extractActivityTypeFromMessage(textMessage.getText());
             exchangeService.sendFishingActivityMessageToExchange(textMessage.getText(),
-                    createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, faMessageType),
-                    faMessageType);
+                    createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, faMessageType), faMessageType);
         } catch (Exception e) {
             log.error("[ERROR] Error while trying to send Flux FAReport message to exchange", e);
             try {
                 exchangeService.sendFishingActivityMessageToExchange(textMessage.getText(),
-                        createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, UNKNOWN),
-                        UNKNOWN);
+                        createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, UNKNOWN), UNKNOWN);
             } catch (JMSException e1) {
                 log.error("[FATAL] Error while trying to send Flux FAReport message to exchange", e);
             }
@@ -102,6 +100,7 @@ public class FluxTlMessageConsumer implements MessageListener {
                     break;
                 } else if (FLUXRESPONSE_MESSAGE_START_XSD_ELEMENT.equals(xml.getLocalName())) {
                     type = ActivityType.FLUX_RESPONSE;
+                    break;
                 }
             }
         }

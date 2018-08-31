@@ -35,7 +35,7 @@ public class StartupBean extends PluginDataHolder {
     private boolean isEnabled = false;
     private boolean waitingForResponse = false;
     private int numberOfTriesExecuted = 0;
-    private String registeredClassName = StringUtils.EMPTY;
+    private String registeredClassName = "FluxActivityPlugin";
 
     @EJB
     private PluginToEventBusTopicProducer messageProducer;
