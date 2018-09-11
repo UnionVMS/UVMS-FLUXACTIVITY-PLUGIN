@@ -44,7 +44,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.Map;
 
@@ -120,7 +119,7 @@ public class FLUXFAReportMessageReceiverBean extends AbstractFluxReceiver {
         exchangeBaseRequest.setPluginType(PluginType.FLUX);
         exchangeBaseRequest.setSenderOrReceiver(fr);
         exchangeBaseRequest.setOnValue(rt.getON());
-        exchangeBaseRequest.setTo(rt.getTO() != null ? BigInteger.valueOf(rt.getTO()) : null);
+        exchangeBaseRequest.setTo(rt.getTO() != null ? rt.getTO().toString() : null);
         exchangeBaseRequest.setTodt(rt.getTODT() != null ? rt.getTODT().toString() : null);
     }
 
