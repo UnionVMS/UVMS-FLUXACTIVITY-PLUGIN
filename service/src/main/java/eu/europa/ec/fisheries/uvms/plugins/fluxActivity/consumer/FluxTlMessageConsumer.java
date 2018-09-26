@@ -11,17 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.xml.sax.SAXException;
-
 import javax.ejb.*;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -34,15 +23,24 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Date;
-
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.SAXException;
 import static eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType.UNKNOWN;
 
 @MessageDriven(mappedName = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN_NAME),
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "1"),
-        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "1"),
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "100"),
+        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"),
 })
 @Slf4j
 public class FluxTlMessageConsumer implements MessageListener {
@@ -68,13 +66,13 @@ public class FluxTlMessageConsumer implements MessageListener {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
         final TextMessage textMessage = (TextMessage) inMessage;
-        if(startup.isMessageDelayEnabled()){
-            try {
-                Thread.sleep(startup.getMessageDelay());
-            } catch (InterruptedException e) {
-                log.error("Error while Thread.sleep() was called! To not loose the message the sendToExchange() method is gonna be called anyway..");
-            }
-        }
+        //if(startup.isMessageDelayEnabled()){
+           // try {
+                //Thread.sleep(startup.getMessageDelay());
+           // } catch (InterruptedException e) {
+           //     log.error("Error while Thread.sleep() was called! To not loose the message the sendToExchange() method is gonna be called anyway..");
+           // }
+        //}
         sendToExchange(textMessage);
     }
 
