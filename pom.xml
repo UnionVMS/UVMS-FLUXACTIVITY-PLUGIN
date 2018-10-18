@@ -26,7 +26,7 @@
         <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
         <uvms.commons.version>3.0.19</uvms.commons.version>
-        <exchange.model.version>4.0.22</exchange.model.version>
+        <exchange.model.version>4.0.23-SNAPSHOT</exchange.model.version>
         <!-- Dependencies needed just for the testing WS -->
         <connector-bridge.client.version>2.0.1</connector-bridge.client.version>
         <bridge-connector.client.version>2.0.1</bridge-connector.client.version>
