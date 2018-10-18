@@ -11,12 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.StringReader;
-
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.exception.UUIDSAXException;
 import org.slf4j.Logger;
@@ -26,6 +20,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+import java.io.StringReader;
+
 /**
  * This class Will use SAX Parser to parse input XML document and extracts UUID value of FLUXReportDocument
  * Created by sanera on 16/05/2017.
@@ -34,11 +34,11 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
 
     final static Logger LOG = LoggerFactory.getLogger(SaxParserUUIDExtractor.class);
 
-    private static final String FA_REPORT_DOCUMENT_UUID_CONTAINER_TAG = "rsm:FLUXReportDocument";
-    private static final String FA_QUERY_UUID_CONTAINER_TAG = "rsm:FAQuery";
-    private static final String FLUX_RESPONSE_UUID_CONTAINER_TAG = "ns3:FLUXResponseDocument";
+    private static final String FA_REPORT_DOCUMENT_UUID_CONTAINER_TAG = "FLUXReportDocument";
+    private static final String FA_QUERY_UUID_CONTAINER_TAG = "FAQuery";
+    private static final String FLUX_RESPONSE_UUID_CONTAINER_TAG = "FLUXResponseDocument";
 
-    private static final String ID_TAG = "ram:ID";
+    private static final String ID_TAG = "ID";
     private static final String ID_TAG_FOR_FLUX_RESPONSE = "ID";
     private static final String UUID_ATTRIBUTE = "UUID";
 
@@ -89,13 +89,14 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String s, String s1, String elementName, Attributes attributes) throws SAXException {
+    public void startElement(String s, String s1, String elementName, Attributes attributes) {
         // We need to extract UUID value for FLUXReportDocument. So, Mark when the tag is found.
-        if (CONTAINER_TAG.equals(elementName)) {
+        String cleanElementName =  cleanElementName(elementName);
+        if (CONTAINER_TAG.equals(cleanElementName)) {
             isStartOfInterestedTag = true;
             LOG.debug("FLUXReportDocument tag found.");
         }
-        if (isStartOfInterestedTag && (ID_TAG.equals(elementName) || ID_TAG_FOR_FLUX_RESPONSE.equals(elementName))) {
+        if (isStartOfInterestedTag && (ID_TAG.equals(cleanElementName) || ID_TAG_FOR_FLUX_RESPONSE.equals(cleanElementName))) {
             isIDStart = true;
             LOG.debug("Found ID tag inside FLUXReportDocument tag");
             String value = attributes.getValue("schemeID");
@@ -108,11 +109,12 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
 
     @Override
     public void endElement(String s, String s1, String element) {
-        if (CONTAINER_TAG.equals(element)) {
+        String cleanElementName =  cleanElementName(element);
+        if (CONTAINER_TAG.equals(cleanElementName)) {
             isStartOfInterestedTag = false;
             LOG.debug("FLUXReportDocument tag Ended.");
         }
-        if (ID_TAG.equals(element)) {
+        if (ID_TAG.equals(cleanElementName)) {
             isIDStart = false;
             isUUIDStart = false;
             LOG.debug("ID tag Ended.");
@@ -127,6 +129,14 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
             uuidValue = tmpValue;
             throw new UUIDSAXException("Found the required value . so, stop parsing entire document");
         }
+    }
+
+    private String cleanElementName(String elementName) {
+        String cleanElementName = elementName;
+        if(elementName != null && elementName.indexOf(":") > 0){
+            cleanElementName = elementName.substring(elementName.indexOf(":") + 1);
+        }
+        return cleanElementName;
     }
 
     public String getUuidValue() {

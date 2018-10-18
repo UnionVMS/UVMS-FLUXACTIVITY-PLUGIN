@@ -65,24 +65,16 @@ public class FluxTlMessageConsumer implements MessageListener {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
-        final TextMessage textMessage = (TextMessage) inMessage;
-        //if(startup.isMessageDelayEnabled()){
-           // try {
-                //Thread.sleep(startup.getMessageDelay());
-           // } catch (InterruptedException e) {
-           //     log.error("Error while Thread.sleep() was called! To not loose the message the sendToExchange() method is gonna be called anyway..");
-           // }
-        //}
-        sendToExchange(textMessage);
+        sendToExchange((TextMessage) inMessage);
     }
 
     private void sendToExchange(TextMessage textMessage) {
-        log.info("[INFO] Received Message in UVMSFAPluginEvent Queue from FLUX. Delay has been set to [ {} ] ms.", startup.getMessageDelay());
+        ActivityType faMessageType = null;
         try {
             if (textMessage == null || textMessage.getText() == null) {
                 throw new IllegalArgumentException("Message received in ERS Plugin is null.");
             }
-            final ActivityType faMessageType = extractActivityTypeFromMessage(textMessage.getText());
+            faMessageType = extractActivityTypeFromMessage(textMessage.getText());
             exchangeService.sendFishingActivityMessageToExchange(textMessage.getText(),
                     createExchangeMessagePropertiesForFluxFAReportRequest(textMessage, faMessageType), faMessageType);
         } catch (Exception e) {
@@ -94,7 +86,7 @@ public class FluxTlMessageConsumer implements MessageListener {
                 log.error("[FATAL] Error while trying to send Flux FAReport message to exchange", e);
             }
         }
-        log.info("Consumed one msg...");
+        log.info("Consumed one [ {} ] in FaPlugin...\n", faMessageType);
     }
 
     public ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
