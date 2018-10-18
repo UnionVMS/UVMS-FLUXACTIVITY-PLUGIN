@@ -32,5 +32,6 @@ public class ExchangeMessageProperties {
     private PluginType pluginType;
     private String senderReceiver;
     private String messageGuid;
+    private String ad;
 
 }

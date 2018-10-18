@@ -13,12 +13,29 @@
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.flux.ws;
 
 
+import eu.europa.ec.fisheries.schema.exchange.module.v1.*;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToExchangeProducer;
+import lombok.extern.slf4j.Slf4j;
+import org.jboss.ws.api.annotation.WebContext;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import xeu.bridge_connector.v1.RequestType;
+import xeu.bridge_connector.v1.VerbosityType;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -28,28 +45,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import eu.europa.ec.fisheries.schema.exchange.module.v1.*;
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToExchangeProducer;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.jboss.ws.api.annotation.WebContext;
-import org.w3c.dom.Element;
-import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-import xeu.bridge_connector.v1.RequestType;
-import xeu.bridge_connector.v1.VerbosityType;
 
 @Stateless
 @WebService(serviceName = "FLUXFAReportMessageService", targetNamespace = "urn:xeu:bridge-connector:wsdl:v1", portName = "BridgeConnectorPortType", endpointInterface = "xeu.bridge_connector.wsdl.v1.BridgeConnectorPortType")
@@ -78,55 +74,20 @@ public class FLUXFAReportMessageReceiverBean extends AbstractFluxReceiver {
         switch (localName) {
             case FLUXFAQUERY_MESSAGE:
                 exchangeBaseRequest = new SetFAQueryMessageRequest();
-
-                JAXBContext jc = JAXBContext.newInstance(FLUXFAQueryMessage.class);
-                Unmarshaller unmarshaller = jc.createUnmarshaller();
-                FLUXFAQueryMessage xmlMessage = (FLUXFAQueryMessage) unmarshaller.unmarshal(rt.getAny());
-                FAQuery faQuery = xmlMessage.getFAQuery();
-                String guid = null;
-                if (faQuery != null){
-                    IDType id = faQuery.getID();
-                    guid = id.getValue();
-                }
-                exchangeBaseRequest.setMessageGuid(guid);
+                exchangeBaseRequest.setMessageGuid(extractMessageGuidFromInputXML(faMessageXml, ActivityType.FA_QUERY));
                 exchangeBaseRequest.setMethod(ExchangeModuleMethod.SET_FA_QUERY_MESSAGE);
                 ((SetFAQueryMessageRequest) exchangeBaseRequest).setRequest(cleanFLUXQueryMessage(faMessageXml));
                 break;
             case FLUXFAREPORT_MESSAGE:
-
-                JAXBContext jc2 = JAXBContext.newInstance(FLUXFAReportMessage.class);
-                Unmarshaller unmarshaller2 = jc2.createUnmarshaller();
-                FLUXFAReportMessage xmlMessage2 = (FLUXFAReportMessage) unmarshaller2.unmarshal(rt.getAny());
-                FLUXReportDocument fluxReportDocument = xmlMessage2.getFLUXReportDocument();
-                String guid2 = null;
-                if (fluxReportDocument != null){
-                    List<IDType> fluxReportDocumentIDS = fluxReportDocument.getIDS();
-                    if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
-                        guid2 = fluxReportDocumentIDS.get(0).getValue();
-                    }
-                }
-
                 exchangeBaseRequest = new SetFLUXFAReportMessageRequest();
                 exchangeBaseRequest.setMethod(ExchangeModuleMethod.SET_FLUX_FA_REPORT_MESSAGE);
-                exchangeBaseRequest.setMessageGuid(guid2);
+                exchangeBaseRequest.setMessageGuid(extractMessageGuidFromInputXML(faMessageXml, ActivityType.FA_REPORT));
                 ((SetFLUXFAReportMessageRequest) exchangeBaseRequest).setRequest(cleanFLUXReportMessage(faMessageXml));
                 break;
             case FLUXRESPONSE_MESSAGE:
                 exchangeBaseRequest = new SetFLUXFAResponseMessageRequest();
                 exchangeBaseRequest.setMethod(ExchangeModuleMethod.RCV_FLUX_FA_RESPONSE_MESSAGE);
-
-                JAXBContext jc3 = JAXBContext.newInstance(FLUXResponseDocument.class);
-                Unmarshaller unmarshaller3 = jc3.createUnmarshaller();
-                FLUXFAReportMessage xmlMessage3 = (FLUXFAReportMessage) unmarshaller3.unmarshal(rt.getAny());
-                FLUXReportDocument fluxReportDocument2 = xmlMessage3.getFLUXReportDocument();
-                String guid3 = null;
-                if (fluxReportDocument2 != null){
-                    List<IDType> fluxReportDocumentIDS = fluxReportDocument2.getIDS();
-                    if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
-                        guid3 = fluxReportDocumentIDS.get(0).getValue();
-                    }
-                }
-                exchangeBaseRequest.setMessageGuid(guid3);
+                exchangeBaseRequest.setMessageGuid(extractMessageGuidFromInputXML(faMessageXml, ActivityType.FLUX_RESPONSE));
                 ((SetFLUXFAResponseMessageRequest) exchangeBaseRequest).setRequest(cleanFLUXResponseMessage(faMessageXml));
                 break;
             default:
@@ -160,11 +121,23 @@ public class FLUXFAReportMessageReceiverBean extends AbstractFluxReceiver {
         exchangeBaseRequest.setOnValue(rt.getON());
         exchangeBaseRequest.setTo(rt.getTO() != null ? rt.getTO().toString() : null);
         exchangeBaseRequest.setTodt(rt.getTODT() != null ? rt.getTODT().toString() : null);
+        exchangeBaseRequest.setAd(ad);
     }
 
     @Override
     protected StartupBean getStartupBean() {
         return startupBean;
+    }
+
+    private String extractMessageGuidFromInputXML(String message, ActivityType type) {
+        String messageGuid = null;
+        SaxParserUUIDExtractor saxParserForFaFLUXMessge = new SaxParserUUIDExtractor(type);
+        try {
+            saxParserForFaFLUXMessge.parseDocument(message);
+        } catch (SAXException | NullPointerException e) {
+            messageGuid = saxParserForFaFLUXMessge.getUuidValue();
+        }
+        return messageGuid;
     }
 
     private String cleanFLUXResponseMessage(String fluxFAResponse) {

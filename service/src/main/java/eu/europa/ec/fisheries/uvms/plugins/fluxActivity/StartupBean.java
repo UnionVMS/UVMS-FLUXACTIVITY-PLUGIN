@@ -34,10 +34,6 @@ public class StartupBean extends PluginDataHolder {
     private boolean waitingForResponse = false;
     private int numberOfTriesExecuted = 0;
     private String registeredClassName = "FluxActivityPlugin";
-    @Getter
-    private int messageDelay = DEFAULT_MESSAGE_DELAY;
-    @Getter
-    private boolean messageDelayEnabled = true;
 
     @EJB
     private PluginToEventBusTopicProducer messageProducer;
@@ -56,8 +52,6 @@ public class StartupBean extends PluginDataHolder {
         //This must be loaded first!!! Not doing that will end in dire problems later on!
         super.setPluginApplicaitonProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PLUGIN_PROPERTIES_KEY));
         registeredClassName = getPLuginApplicationProperty("application.groupid");
-        messageDelay = Integer.parseInt(getPLuginApplicationProperty("message.delay"));
-        messageDelayEnabled = Boolean.parseBoolean(getPLuginApplicationProperty("message.delay.enabled"));
 
         //These can be loaded in any order
         super.setPluginProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PROPERTIES_KEY));
