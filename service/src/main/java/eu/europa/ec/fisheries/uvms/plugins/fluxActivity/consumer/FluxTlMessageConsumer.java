@@ -11,6 +11,17 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
+import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.SAXException;
+
 import javax.ejb.*;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -23,16 +34,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Date;
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.ExchangeMessageProperties;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.parser.SaxParserUUIDExtractor;
-import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FluxFaPluginExchangeService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.xml.sax.SAXException;
+
 import static eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityType.UNKNOWN;
 
 @MessageDriven(mappedName = MessageConstants.QUEUE_FLUX_FA_MESSAGE_IN, activationConfig = {
@@ -55,6 +57,7 @@ public class FluxTlMessageConsumer implements MessageListener {
     private static final String ON = "ON";
     private static final String TO = "TO";
     private static final String TODT = "TODT";
+    private static final String AD = "AD";
 
     @EJB
     private FluxFaPluginExchangeService exchangeService;
@@ -129,6 +132,7 @@ public class FluxTlMessageConsumer implements MessageListener {
         exchangeMessageProperties.setTodt(extractStringPropertyFromJMSTextMessage(textMessage, TODT));
         exchangeMessageProperties.setSenderReceiver(extractStringPropertyFromJMSTextMessage(textMessage, FR));
         exchangeMessageProperties.setOnValue(extractStringPropertyFromJMSTextMessage(textMessage, ON));
+        exchangeMessageProperties.setAd(extractStringPropertyFromJMSTextMessage(textMessage, AD));
         exchangeMessageProperties.setMessageGuid(type != UNKNOWN ? extractMessageGuidFromInputXML(textMessage.getText(), type) : StringUtils.EMPTY);
         log.info("Properties read from the message:" + exchangeMessageProperties);
         return exchangeMessageProperties;
