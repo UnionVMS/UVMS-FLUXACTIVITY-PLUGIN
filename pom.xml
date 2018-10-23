@@ -8,6 +8,13 @@
     <packaging>pom</packaging>
     <description>Plugin template</description>
 
+    <parent>
+        <groupId>fish.focus.uvms.maven</groupId>
+        <artifactId>uvms-pom</artifactId>
+        <relativePath />
+        <version>1.18</version>
+    </parent>
+
     <properties>
         <maven.release.plugin.version>2.5.2</maven.release.plugin.version>
         <maven.scm.provider.version>2.1.1</maven.scm.provider.version>
@@ -156,15 +163,6 @@
 
     <profiles>
         <profile>
-            <id>java8-doclint-disabled</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.opts>-Xdoclint:none</javadoc.opts>
-            </properties>
-        </profile>
-        <profile>
             <id>dg-mare</id>
             <distributionManagement>
                 <repository>
@@ -178,7 +176,6 @@
                     <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
-
             <properties>
                 <scm.connection>
                     scm:git:https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-FLUXACTIVITY-PLUGIN.git
