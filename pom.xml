@@ -13,7 +13,7 @@
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
         <relativePath/>
-        <version>1.18</version>
+        <version>1.21</version>
     </parent>
 
     <properties>
@@ -27,11 +27,8 @@
         <logback.version>1.1.2</logback.version>
         <logback.core.version>1.1.2</logback.core.version>
         <audit.model.version>2.0.3</audit.model.version>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <activity.model>1.0.7</activity.model>
+        <activity.model>1.0.8</activity.model>
         <commons.lang.version>2.6</commons.lang.version>
-        <wildfly.jms.client.version>8.2.0.Final</wildfly.jms.client.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
         <uvms.commons.version>3.0.19</uvms.commons.version>
         <exchange.model.version>4.0.23</exchange.model.version>
@@ -186,7 +183,6 @@
                     <url>https://webgate.ec.europa.eu/CITnet/nexus/content/repositories/mare-snapshots/</url>
                 </snapshotRepository>
             </distributionManagement>
-
             <properties>
                 <scm.connection>
                     scm:git:https://emsanerac@webgate.ec.europa.eu/CITnet/stash/scm/unionvms/UVMS-FLUXACTIVITY-PLUGIN.git

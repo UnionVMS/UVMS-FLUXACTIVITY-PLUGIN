@@ -50,7 +50,6 @@ public class PluginNameEventBusListener implements MessageListener {
     private FLUXMessageProducer fluxMessageProducer;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
         log.debug("Eventbus listener for fluxActivity (MessageConstants.PLUGIN_SERVICE_CLASS_NAME): {}", startup.getRegisterClassName());
         TextMessage textMessage = (TextMessage) inMessage;

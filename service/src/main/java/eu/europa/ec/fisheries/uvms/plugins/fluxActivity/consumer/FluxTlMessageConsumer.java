@@ -66,13 +66,9 @@ public class FluxTlMessageConsumer implements MessageListener {
     private StartupBean startup;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
-        sendToExchange((TextMessage) inMessage);
-    }
-
-    private void sendToExchange(TextMessage textMessage) {
         ActivityType faMessageType = null;
+        TextMessage textMessage = (TextMessage) inMessage;
         try {
             if (textMessage == null || textMessage.getText() == null) {
                 throw new IllegalArgumentException("Message received in ERS Plugin is null.");
@@ -91,6 +87,7 @@ public class FluxTlMessageConsumer implements MessageListener {
         }
         log.info("Consumed one [ {} ] in FaPlugin...\n", faMessageType);
     }
+
 
     public ActivityType extractActivityTypeFromMessage(String document) throws XMLStreamException {
         Reader reader = new StringReader(document);
