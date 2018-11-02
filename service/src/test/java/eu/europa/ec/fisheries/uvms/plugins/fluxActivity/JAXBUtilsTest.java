@@ -26,8 +26,7 @@ public class JAXBUtilsTest {
 
         FLUXFAReportMessage fluxfaReportMessage = new FLUXFAReportMessage();
         fluxfaReportMessage.setFLUXReportDocument(new FLUXReportDocument());
-        String jaxBObjectToString =
-                JAXBUtils.marshallJaxBObjectToString(fluxfaReportMessage, "UTF-8", true);
+        String jaxBObjectToString = JAXBUtils.marshallJaxBObjectToString(fluxfaReportMessage, "UTF-8", true);
         assertFalse(jaxBObjectToString.contains("standalone=\"yes\""));
         assertFalse(jaxBObjectToString.contains("encoding=\"UTF-8\""));
         assertFalse(jaxBObjectToString.contains("version=\"1.0\""));
