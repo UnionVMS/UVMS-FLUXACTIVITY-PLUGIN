@@ -11,7 +11,6 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.mapper.ServiceMapper;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.producer.PluginToEventBusTopicProducer;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.service.FileHandlerBean;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
@@ -19,8 +18,6 @@ import javax.annotation.PreDestroy;
 import javax.ejb.*;
 import java.util.Map;
 import java.util.Properties;
-
-import static eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstatns.DEFAULT_MESSAGE_DELAY;
 
 @Singleton
 @Startup

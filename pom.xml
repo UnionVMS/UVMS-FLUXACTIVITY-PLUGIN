@@ -101,7 +101,7 @@
             <exclusions>
                 <exclusion>  <!-- declare the exclusion here -->
                     <groupId>eu.europa.ec.fisheries.uvms</groupId>
-                    <artifactId>config-library</artifactId>
+                    <artifactId>uvms-config</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
