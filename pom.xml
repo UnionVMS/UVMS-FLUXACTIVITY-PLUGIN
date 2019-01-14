@@ -30,7 +30,7 @@
         <activity.model>1.0.8</activity.model>
         <commons.lang.version>2.6</commons.lang.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
-        <uvms.commons.version>3.0.29</uvms.commons.version>
+        <uvms.commons.version>3.0.31-W14J8</uvms.commons.version>
         <exchange.model.version>4.0.23</exchange.model.version>
         <!-- Dependencies needed just for the testing WS -->
         <connector-bridge.client.version>2.0.1</connector-bridge.client.version>
