@@ -22,7 +22,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractTopicProducer;
 public class PluginToEventBusTopicProducer extends AbstractTopicProducer {
 
     @Override
-    protected String getDestinationName() {
+    public String getDestinationName() {
         return MessageConstants.EVENT_BUS_TOPIC;
     }
 }
