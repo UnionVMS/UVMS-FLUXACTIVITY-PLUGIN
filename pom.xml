@@ -4,7 +4,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
     <artifactId>flux-activity-plugin</artifactId>
-    <version>1.0.17-SNAPSHOT</version>
+    <version>1.0.17.2-W14J8</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
 
@@ -148,7 +148,7 @@
 
     <scm>
         <connection>${scm.connection}</connection>
-        <tag>HEAD</tag>
+        <tag>flux-activity-plugin-1.0.17.2-W14J8</tag>
     </scm>
 
     <profiles>
