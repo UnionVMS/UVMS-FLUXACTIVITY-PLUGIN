@@ -49,23 +49,22 @@ public class StartupBean extends PluginDataHolder {
         //This must be loaded first!!! Not doing that will end in dire problems later on!
         super.setPluginApplicaitonProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PLUGIN_PROPERTIES_KEY));
         registeredClassName = getPLuginApplicationProperty("application.groupid");
-
-        //These can be loaded in any order
-        super.setPluginProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PROPERTIES_KEY));
+        super.setPluginSettings(fileHandler.getPropertiesFromFile(PluginDataHolder.PROPERTIES_KEY));
         super.setPluginCapabilities(fileHandler.getPropertiesFromFile(PluginDataHolder.CAPABILITIES_KEY));
 
         ServiceMapper.mapToMapFromProperties(super.getSettings(), super.getPluginProperties(), getRegisterClassName());
         ServiceMapper.mapToMapFromProperties(super.getCapabilities(), super.getPluginCapabilities(), null);
+        ServiceMapper.mapToMapFromProperties(super.getProperties(), super.getPluginApplicaitonProperties(), null);
 
         capabilities = ServiceMapper.getCapabilitiesListTypeFromMap(super.getCapabilities());
         settingList = ServiceMapper.getSettingsListTypeFromMap(super.getSettings());
         serviceType = ServiceMapper.getServiceType(getRegisterClassName(),
-                getApplicaionName(), "Flux Plugin for accepting Fishing Activities related XML messages.", PluginType.SATELLITE_RECEIVER, getPluginResponseSubscriptionName());
+                getApplicaionName(), "Flux Plugin for accepting Fishing Activities related XML messages.", PluginType.FLUX, getPluginResponseSubscriptionName());
         register();
 
-        log.debug("Settings updated in plugin {}", registeredClassName);
+        log.info("Settings updated in plugin {}", registeredClassName);
         for (Map.Entry<String, String> entry : super.getSettings().entrySet()) {
-            log.debug("Setting: KEY: {} , VALUE: {}", entry.getKey(), entry.getValue());
+            log.info("Setting: KEY: {} , VALUE: {}", entry.getKey(), entry.getValue());
         }
         populateFluxParameters();
         log.info("PLUGIN STARTED");
@@ -78,9 +77,9 @@ public class StartupBean extends PluginDataHolder {
         fluxParameters = new FluxParameters();
         Properties plugProps = super.getPluginApplicaitonProperties();
         fluxParameters.populate(
-                (String)plugProps.get("provider.url"),
-                (String)plugProps.get("security.principal.id"),
-                (String)plugProps.get("security.principal.pwd"));
+                (String) plugProps.get("provider.url"),
+                (String) plugProps.get("security.principal.id"),
+                (String) plugProps.get("security.principal.pwd"));
     }
 
     @PreDestroy
@@ -139,7 +138,7 @@ public class StartupBean extends PluginDataHolder {
     }
 
     public String getPluginResponseSubscriptionName() {
-        return getRegisterClassName() + getSetting("application.responseTopicName");
+        return getRegisterClassName() + getProperties().get("application.responseTopicName");
     }
     public String getResponseTopicMessageName() {
         return getSetting("application.groupid");

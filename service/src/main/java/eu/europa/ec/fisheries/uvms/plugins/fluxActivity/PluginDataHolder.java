@@ -5,8 +5,6 @@
  */
 package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
 
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
-
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -17,44 +15,49 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class PluginDataHolder {
 
-    public final static String PLUGIN_PROPERTIES_KEY = "fluxActivity.properties";
-    public final static String PROPERTIES_KEY        = "settings.properties";
-    public final static String CAPABILITIES_KEY      = "capabilities.properties";
+    final static String PLUGIN_PROPERTIES_KEY = "fluxActivity.properties";
+    final static String PROPERTIES_KEY        = "settings.properties";
+    final static String CAPABILITIES_KEY      = "capabilities.properties";
 
-    private Properties fluxActivityApplicaitonProperties;
+    // Contains the properties from : fluxActivity.properties
     private Properties fluxActivityProperties;
+
+    // Contains the properties from : settings.properties
+    private Properties fluxActivitySettings;
+
+    // Contains the properties from : capabilities.properties
     private Properties fluxActivityCapabilities;
 
     private final ConcurrentMap<String, String> settings = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, String> capabilities = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> properties = new ConcurrentHashMap<>();
 
     public ConcurrentMap<String, String> getSettings() {
         return settings;
     }
-    public ConcurrentMap<String, String> getCapabilities() {
+    ConcurrentMap<String, String> getCapabilities() {
         return capabilities;
     }
-    public ConcurrentMap<String, SetReportMovementType> getCachedMovement() {
-        return cachedMovement;
-    }
-    public Properties getPluginApplicaitonProperties() {
-        return fluxActivityApplicaitonProperties;
-    }
-    public void setPluginApplicaitonProperties(Properties fluxActivityApplicaitonProperties) {
-        this.fluxActivityApplicaitonProperties = fluxActivityApplicaitonProperties;
-    }
-    public Properties getPluginProperties() {
+    Properties getPluginApplicaitonProperties() {
         return fluxActivityProperties;
     }
-    public void setPluginProperties(Properties fluxActivityProperties) {
-        this.fluxActivityProperties = fluxActivityProperties;
+    void setPluginApplicaitonProperties(Properties fluxActivityApplicaitonProperties) {
+        this.fluxActivityProperties = fluxActivityApplicaitonProperties;
     }
-    public Properties getPluginCapabilities() {
+    Properties getPluginProperties() {
+        return fluxActivitySettings;
+    }
+    void setPluginSettings(Properties fluxActivityProperties) {
+        this.fluxActivitySettings = fluxActivityProperties;
+    }
+    Properties getPluginCapabilities() {
         return fluxActivityCapabilities;
     }
-    public void setPluginCapabilities(Properties fluxActivityCapabilities) {
+    void setPluginCapabilities(Properties fluxActivityCapabilities) {
         this.fluxActivityCapabilities = fluxActivityCapabilities;
     }
 
+    public ConcurrentMap<String, String> getProperties() {
+        return properties;
+    }
 }

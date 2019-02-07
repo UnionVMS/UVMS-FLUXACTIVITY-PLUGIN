@@ -9,14 +9,14 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.fluxActivity.constants.ActivityPluginConstants;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @MessageDriven(mappedName = MessageConstants.EVENT_BUS_TOPIC, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
@@ -27,16 +27,15 @@ import org.slf4j.LoggerFactory;
         @ActivationConfigProperty(propertyName = MessageConstants.CLIENT_ID_STR, propertyValue = ActivityPluginConstants.CLIENT_ID_AC),
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGE_SELECTOR_STR, propertyValue = ActivityPluginConstants.MESSAGE_SELECTOR_AC)
 })
+@Slf4j
 public class PluginAckEventBusListener implements MessageListener {
-
-    final static Logger LOG = LoggerFactory.getLogger(PluginAckEventBusListener.class);
 
     @EJB
     private StartupBean startupService;
 
     @Override
     public void onMessage(Message inMessage) {
-        LOG.info("Eventbus listener for fluxActivity at selector: {} got a message", startupService.getPluginResponseSubscriptionName());
+        log.info("Eventbus listener for fluxActivity at selector: {} got a message", startupService.getPluginResponseSubscriptionName());
         TextMessage textMessage = (TextMessage) inMessage;
         try {
             ExchangeRegistryBaseRequest request = tryConsumeRegistryBaseRequest(textMessage);
@@ -56,24 +55,24 @@ public class PluginAckEventBusListener implements MessageListener {
                     setUnRegistrationResponse(unregisterResponse);
                     break;
                 default:
-                    LOG.error("Not supported method");
+                    log.error("Not supported method");
                     break;
             }
         } catch (ExchangeModelMarshallException | NullPointerException e) {
-            LOG.error("[ Error when receiving message in fishingActivity ]", e);
+            log.error("[ Error when receiving message in fishingActivity ]", e);
         }
     }
 
     private void setUnRegistrationResponse(UnregisterServiceResponse unregisterResponse) {
         switch (unregisterResponse.getAck().getType()) {
             case OK:
-                LOG.info("Unregister OK");
+                log.info("[UNREGISTER] Unregisteration process went OK");
                 break;
             case NOK:
-                LOG.info("Unregister NOK");
+                log.info("Unregister NOK");
                 break;
             default:
-                LOG.error("[ Ack type not supported ] ");
+                log.error("[ Ack type not supported ] ");
                 break;
         }
     }
@@ -81,27 +80,27 @@ public class PluginAckEventBusListener implements MessageListener {
     private void setRegistrationResponse(ExchangeRegistryBaseRequest request, RegisterServiceResponse registerResponse) {
         switch (registerResponse.getAck().getType()) {
             case OK:
-                LOG.info("Register OK");
+                log.info("[REGISTER] Registeration process went OK");
                 startupService.setIsRegistered(Boolean.TRUE);
                 break;
             case NOK:
-                LOG.info("Register NOK: " + registerResponse.getAck().getMessage());
+                log.info("Register NOK: " + registerResponse.getAck().getMessage());
                 startupService.setIsRegistered(Boolean.FALSE);
                 break;
             default:
-                LOG.error("[ Type not supperted: ]" + request.getMethod());
+                log.error("[ Type not supperted: ]" + request.getMethod());
         }
     }
 
     private void handlePluginFault(PluginFault fault) {
-        LOG.error(startupService.getPluginResponseSubscriptionName() + " received fault " + fault.getCode() + " : " + fault.getMessage());
+        log.error(startupService.getPluginResponseSubscriptionName() + " received fault " + fault.getCode() + " : " + fault.getMessage());
     }
 
     private ExchangeRegistryBaseRequest tryConsumeRegistryBaseRequest(TextMessage textMessage) {
         try {
             return JAXBMarshaller.unmarshallTextMessage(textMessage, ExchangeRegistryBaseRequest.class);
         } catch (ExchangeModelMarshallException e) {
-            LOG.error("Error trying to consume BaseRequest", e);
+            log.error("Error trying to consume BaseRequest", e);
             return null;
         }
     }

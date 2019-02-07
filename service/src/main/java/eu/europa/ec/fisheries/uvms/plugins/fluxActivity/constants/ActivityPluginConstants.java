@@ -6,8 +6,8 @@ public class ActivityPluginConstants {
         super();
     }
 
-    public static final String FA_GROUP_ID_ARTIFACT_ID = "eu.europa.ec.fisheries.uvms.plugins.flux.activity";
-    public static final String FA_GROUP_ID_ARTIFACT_ID_AC = "eu.europa.ec.fisheries.uvms.plugins.flux.activityPLUGIN_RESPONSE";
+    private static final String FA_GROUP_ID_ARTIFACT_ID = "eu.europa.ec.fisheries.uvms.plugins.flux.activity";
+    private static final String FA_GROUP_ID_ARTIFACT_ID_AC = "eu.europa.ec.fisheries.uvms.plugins.flux.activityPLUGIN_RESPONSE";
 
     public static final String CLIENT_ID_EV         = FA_GROUP_ID_ARTIFACT_ID;
     public static final String SUBSCRIPTION_NAME_EV = FA_GROUP_ID_ARTIFACT_ID;

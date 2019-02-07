@@ -3,15 +3,13 @@ package eu.europa.ec.fisheries.uvms.plugins.fluxActivity.consumer;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
 
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAQueryRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAReportRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAResponseRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.*;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -66,11 +64,19 @@ public class PluginNameEventBusListener implements MessageListener {
                     log.info("[INFO] FLUXFAReportMessage Received in FLUX ACTIVITY PLUGIN.");
                     sendFaReportToFluxTL(textMessage);
                     break;
+                case SET_CONFIG :
+                    SetConfigRequest setConfig = JAXBMarshaller.unmarshallTextMessage(textMessage, SetConfigRequest.class);
+                    log.info("[CONFIG] Config(s) [{}] was correctly set.", setConfig.getConfigurations());
+                    break;
+                case START :
+                    StartRequest startReq = JAXBMarshaller.unmarshallTextMessage(textMessage, StartRequest.class);
+                    log.info("[STARTED] Plugin was started!");
+                    break;
                 default:
-                    log.error("Not supported method : [ " +request.getMethod()+ " ]");
+                    log.error("Not supported method : [ {} ] and request : [ {} ]", request.getMethod(), ((TextMessage) inMessage).getText());
                     break;
             }
-        } catch (MessageException e) {
+        } catch (MessageException | JMSException e) {
             log.error("Not able to send message to FLUX", e);
         } catch (ExchangeModelMarshallException | NullPointerException e) {
             log.error("[ Error when receiving message in fluxActivity " + startup.getRegisterClassName() + " ]", e);
@@ -117,7 +123,7 @@ public class PluginNameEventBusListener implements MessageListener {
         if (fluxResponseMessage == null) {
             throw new PluginException("Cleaned FLUXResponseMessage is null. ");
         }
-        fluxMessageProducer.sendModuleMessageWithProps(fluxResponseMessage, null, fluxMessageProducer.getFLUXMessageProperties(fluxFAResponseRequest));
+//        /fluxMessageProducer.sendModuleMessageWithProps(fluxResponseMessage, null, fluxMessageProducer.getFLUXMessageProperties(fluxFAResponseRequest));
         log.info("[INFO] FLUXFAResponse message sent successfully to FLUX TL...");
     }
 
