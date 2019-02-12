@@ -50,28 +50,4 @@
         </dependency>
     </dependencies>
 
-   <profiles>
-        <profile>
-            <id>wildfly-deploy</id>
-            <build>
-                <plugins>	
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>1.0.2.Final</version>
-                        <configuration>
-                            <filename>${project.build.finalName}.${project.packaging}</filename>
-                            <targetDir>${project.build.directory}</targetDir>
-                            <hostname>${hostname}</hostname>
-                            <port>${port}</port>
-                            <username>${username}</username>
-                            <password>${password}</password>
-                            <force>true</force>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>        
-    </profiles>  
-
 </project>

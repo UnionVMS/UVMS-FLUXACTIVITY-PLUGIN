@@ -32,12 +32,51 @@
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
             <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
             <version>${uvms.commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!-- Model dependencies -->
+
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.service.client</groupId>
+            <artifactId>connector-bridge-client</artifactId>
+            <version>${connector-bridge.client.version}</version>
+        </dependency>
+        <!-- incoming messages from FLUX -->
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.service.client</groupId>
+            <artifactId>bridge-connector-client</artifactId>
+            <version>${bridge-connector.client.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -54,6 +93,11 @@
             <artifactId>jbossws-api</artifactId>
             <version>${jbossws.api.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.13.1</version>
         </dependency>
     </dependencies>
     
