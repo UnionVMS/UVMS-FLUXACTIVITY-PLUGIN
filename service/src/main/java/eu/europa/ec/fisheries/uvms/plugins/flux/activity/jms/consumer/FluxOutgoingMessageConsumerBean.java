@@ -119,7 +119,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             String adValue = request.getDestination();
             String dfValue = request.getFluxDataFlow();
-            postRequest(getPostMsgType(request, adValue, dfValue));
+            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue());
         } catch (MappingException | JAXBException | DatatypeConfigurationException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
@@ -134,7 +134,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         }
     }
 
-    private void postRequest(PostMsgType postMsgType) {
+    private void postRequest(PostMsgType postMsgType, String onValue) {
         while(portInitiator.isWaitingForUrlConfigProperty()){
             try {
                 Thread.sleep(1000);
@@ -144,11 +144,12 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         BridgeConnectorPortType port = portInitiator.getPort();
         BindingProvider bp = (BindingProvider) port;
         bp.getRequestContext().put(CONNECTOR_ID, startupBean.getSetting(CLIENT_ID));
+        String endPoint = ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString();
         try {
             port.post(postMsgType);
-            log.info("Successfully send message to bridge {} {} {} {}", postMsgType.getAD(), postMsgType.getDF(), postMsgType.getTO(), postMsgType.getTODT());
+            log.info("Message {} send to {}", onValue, endPoint);
         } catch (WebServiceException ex){
-            log.error("Couldn't send message to {}", ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString(), ex.getCause());
+            log.error("Couldn't send message to {}", endPoint, ex.getCause());
         }
     }
 
@@ -156,7 +157,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             String adValue = request.getDestination();
             String dfValue = request.getFluxDataFlow();
-            postRequest(getPostMsgType(request, adValue, dfValue));
+            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue());
         } catch (MappingException | DatatypeConfigurationException | JAXBException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
@@ -167,7 +168,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             String adValue = request.getDestination();
             String dfValue = request.getFluxDataFlow();
-            postRequest(getPostMsgType(request, adValue, dfValue));
+            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue());
         } catch (MappingException | DatatypeConfigurationException | JAXBException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
