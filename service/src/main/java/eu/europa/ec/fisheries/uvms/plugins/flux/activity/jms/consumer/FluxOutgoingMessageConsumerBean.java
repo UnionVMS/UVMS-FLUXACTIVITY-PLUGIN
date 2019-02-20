@@ -68,7 +68,10 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         TextMessage textMessage = (TextMessage) inMessage;
         try {
             PluginBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginBaseRequest.class);
-            log.info("Received method {}, redelivered {} times", request.getMethod(), getTimesRedelivered(inMessage));
+            int timesRedelivered = getTimesRedelivered(inMessage);
+            if (timesRedelivered > 0){
+                log.info("Received method {}, redelivered {} times", request.getMethod(), getTimesRedelivered(inMessage));
+            }
             switch (request.getMethod()) {
                 case SEND_FA_REPORT:
                     SetFLUXFAReportRequest activityReportRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAReportRequest.class);
@@ -143,6 +146,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         bp.getRequestContext().put(CONNECTOR_ID, startupBean.getSetting(CLIENT_ID));
         try {
             port.post(postMsgType);
+            log.info("Successfully send message to bridge {} {} {} {}", postMsgType.getAD(), postMsgType.getDF(), postMsgType.getTO(), postMsgType.getTODT());
         } catch (WebServiceException ex){
             log.error("Couldn't send message to {}", ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString(), ex.getCause());
         }
