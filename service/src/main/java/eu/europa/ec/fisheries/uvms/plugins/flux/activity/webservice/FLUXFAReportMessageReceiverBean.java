@@ -66,9 +66,11 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
 
     public ResponseType post(RequestType rt) {
         ResponseType type = new ResponseType();
+        String onValue = rt!=null?rt.getON():null;
         try {
-            log.debug("Got activity request from FLUX in FLUX plugin");
+            log.info("[INFO] Got activity request from FLUX in FLUX plugin.. ON  [{}]", onValue);
             sendToExchange(rt);
+            log.info("[INFO] Message (Related to ON : [{}]) forwarded to exchange..", onValue);
             type.setStatus("OK");
             return type;
         } catch (Exception e) {

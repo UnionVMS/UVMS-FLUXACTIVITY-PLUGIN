@@ -28,6 +28,7 @@
                         </ejbModule>
                     </modules>
                     <skinnyWars>true</skinnyWars>
+                    <filtering>true</filtering>
                 </configuration>
             </plugin>
             <plugin>

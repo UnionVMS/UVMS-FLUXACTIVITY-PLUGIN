@@ -1,24 +1,5 @@
 package eu.europa.ec.fisheries.uvms.plugins.flux.activity.jms.consumer;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.EJB;
-import javax.ejb.MessageDriven;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.*;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingType;
@@ -40,6 +21,26 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import xeu.connector_bridge.v1.PostMsgType;
 import xeu.connector_bridge.wsdl.v1.BridgeConnectorPortType;
+
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 @MessageDriven(mappedName = MessageConstants.EVENT_BUS_TOPIC, activationConfig = {
         @ActivationConfigProperty(propertyName = MessageConstants.MESSAGING_TYPE_STR, propertyValue = MessageConstants.CONNECTION_TYPE),
@@ -119,7 +120,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             String adValue = request.getDestination();
             String dfValue = request.getFluxDataFlow();
-            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue());
+            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue(), "FA_QUERY");
         } catch (MappingException | JAXBException | DatatypeConfigurationException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
@@ -134,7 +135,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         }
     }
 
-    private void postRequest(PostMsgType postMsgType, String onValue) {
+    private void postRequest(PostMsgType postMsgType, String onValue, String msgType) {
         while(portInitiator.isWaitingForUrlConfigProperty()){
             try {
                 Thread.sleep(1000);
@@ -147,9 +148,9 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         String endPoint = ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString();
         try {
             port.post(postMsgType);
-            log.info("Message {} send to {}", onValue, endPoint);
+            log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, onValue, endPoint);
         } catch (WebServiceException ex){
-            log.error("Couldn't send message to {}", endPoint, ex.getCause());
+            log.error("[ERROR] Couldn't send message to {}", endPoint, ex.getCause());
         }
     }
 
@@ -157,7 +158,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             String adValue = request.getDestination();
             String dfValue = request.getFluxDataFlow();
-            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue());
+            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue(), "FA_REPORT");
         } catch (MappingException | DatatypeConfigurationException | JAXBException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
@@ -168,7 +169,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             String adValue = request.getDestination();
             String dfValue = request.getFluxDataFlow();
-            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue());
+            postRequest(getPostMsgType(request, adValue, dfValue), request.getOnValue(), "FA_RESPONSE");
         } catch (MappingException | DatatypeConfigurationException | JAXBException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);

@@ -39,6 +39,11 @@
         <jbossws.api.version>1.0.2.Final</jbossws.api.version>
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
         <lombok.version>1.16.18</lombok.version>
+
+        <!-- jboss-all.xml dependency properties -->
+        <jboss.all.user.dependency.version>2.0.15-W14J8</jboss.all.user.dependency.version>
+        <jboss.all.config.dependency.version>4.0.13-W14J8</jboss.all.config.dependency.version>
+
     </properties>
 
     <dependencies>
@@ -82,23 +87,6 @@
             <version>${logback.core.version}</version>
         </dependency>
 
-        <!-- Model dependencies -->
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
-            <artifactId>exchange-model</artifactId>
-            <version>${exchange.model.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.activity</groupId>
             <artifactId>activity-model</artifactId>
@@ -117,43 +105,6 @@
                     <artifactId>jaxb-core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
-            <artifactId>uvms-commons-message</artifactId>
-            <version>${uvms.commons.version}</version>
-            <exclusions>
-                <exclusion>  <!-- declare the exclusion here -->
-                    <groupId>eu.europa.ec.fisheries.uvms</groupId>
-                    <artifactId>uvms-config</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.ws</groupId>
-            <artifactId>jbossws-api</artifactId>
-            <version>${jbossws.api.version}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- /Dependencies needed just for the testing WS -->
 

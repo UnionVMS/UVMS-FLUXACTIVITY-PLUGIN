@@ -1,22 +1,119 @@
-If you dont have access to a public nexus/mvn repo with this archetype you can release it locally and create your modules from this archetype
+HOW TO POST TO THE WEB SERVICE OF THE PLUGIN :
 
-1. In the archetyperoot ( Where this readme is located ), open cmd and type [ mvn clean archetype:create-from-project ]
-2. cd target/generated-sources/archetype ( from the archetype root )
-3. Type [ mvn install ]
+You can use a tool like posman
 
-Now your archetype is released to your local .m2 repository (eu.europa.ec.fisheries.uvms.component.component-archetype)
+1. URL : {{hostname}}:8080/unionvms/activity-service/FLUXFAReportMessageService/FLUXFAReportMessageReceiverBean?wsdl
+2. Example message :
 
-To create a project from archetype do as follows
-
-1. Create a new folder where you want the project to be
-2. open cmd and cd to that folder
-3. type [ mvn archetype:generate -DarchetypeCatalog=local ]
-4. You will be presented with options from your local artifact repo. Chose the one that have the namespace  "eu.europa.ec.fisheries.uvms.component:component-archetype"
-5. Define value for property 'groupId': : eu.europa.ec.fisheries.uvms.plugins.fluxActivitys.YOUR_COMPONENT_NAME
-6. Define value for property 'artifactId': : YOUR_COMPONENT_NAME
-7. Define value for property 'version':  1.0-SNAPSHOT: : 1.0.0-SNAPSHOT
-8. Define value for property 'package':  eu.europa.ec.fisheries.uvms.plugins.fluxActivitys.YOUR_COMPONENT_NAME: : eu.europa.ec.fisheries.uvms.plugins.fluxActivity.YOUR_COMPONENT_NAME
-9. Select Y and Enter and you're done!
-10. Rename the folder YOUR_COMPONENT_NAME to APP.
-
-Open the generated component in your ide and mvn clean build to ensure that the component is correctly configured
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:xeu:bridge-connector:v1">
+   <soapenv:Header />
+   <soapenv:Body>
+      <urn:Connector2BridgeRequest FR="EST" ON="BLA1234BLAONCEAGAIN1234BLA999" AD="XEU" DF="urn:un:unece:uncefact:fisheries:FLUX:MDM:EU:2" AR="True" TO="2" USER="FLUX" GUID="DEC3A0ED-E2B0-489B-903D-D79313787E2E">
+         <rsm:FLUXFAReportMessage xsi:schemaLocation="urn:un:unece:uncefact:data:standard:FLUXFAReportMessage:3 xsd/FLUXFAReportMessage_3p1/FLUXFAReportMessage_3p1.xsd" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20" xmlns:rsm="urn:un:unece:uncefact:data:standard:FLUXFAReportMessage:3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+         <rsm:FLUXReportDocument>
+            <ram:ID schemeID="UUID">932ef896-9382-42b1-8f11-3d7276d829a2</ram:ID>
+            <ram:CreationDateTime>
+               <udt:DateTime>2018-10-17T11:56:56.979Z</udt:DateTime>
+            </ram:CreationDateTime>
+            <ram:PurposeCode listID="FLUX_GP_PURPOSE">9</ram:PurposeCode>
+            <ram:Purpose>FA-L00-00-0074_003_Negative_Error returned when FA Report Document with VesselTransportMeans/SpecifiedContactParty/SpecifiedContactPerson/FamilyName, VesselTransportMeans/specifiedcontactparty/specifiedcontactperson/alias Family name missing</ram:Purpose>
+            <ram:OwnerFLUXParty>
+               <ram:ID schemeID="FLUX_GP_PARTY">SRC</ram:ID>
+            </ram:OwnerFLUXParty>
+         </rsm:FLUXReportDocument>
+         <rsm:FAReportDocument>
+            <ram:TypeCode listID="FLUX_FA_REPORT_TYPE">DECLARATION</ram:TypeCode>
+            <ram:AcceptanceDateTime>
+               <udt:DateTime>2018-10-17T06:56:56.979Z</udt:DateTime>
+            </ram:AcceptanceDateTime>
+            <ram:RelatedFLUXReportDocument>
+               <ram:ID schemeID="UUID">504be0f3-3776-4bfc-a5ad-d40292c9fa9e</ram:ID>
+               <ram:CreationDateTime>
+                  <udt:DateTime>2018-10-17T08:56:56.979Z</udt:DateTime>
+               </ram:CreationDateTime>
+               <ram:PurposeCode listID="FLUX_GP_PURPOSE">9</ram:PurposeCode>
+               <ram:OwnerFLUXParty>
+                  <ram:ID schemeID="FLUX_GP_PARTY">SRC</ram:ID>
+               </ram:OwnerFLUXParty>
+            </ram:RelatedFLUXReportDocument>
+            <ram:SpecifiedFishingActivity>
+               <ram:TypeCode listID="FLUX_FA_TYPE">DISCARD</ram:TypeCode>
+               <ram:OccurrenceDateTime>
+                  <udt:DateTime>2018-10-17T04:56:56.979Z</udt:DateTime>
+               </ram:OccurrenceDateTime>
+               <ram:ReasonCode listID="FA_REASON_DISCARD">BAI</ram:ReasonCode>
+               <ram:VesselRelatedActivityCode listID="VESSEL_ACTIVITY">ANC</ram:VesselRelatedActivityCode>
+               <ram:OperationsQuantity unitCode="C62">1</ram:OperationsQuantity>
+               <ram:SpecifiedFACatch>
+                  <ram:SpeciesCode listID="FAO_SPECIES">COD</ram:SpeciesCode>
+                  <ram:WeightMeasure unitCode="KGM">52.65</ram:WeightMeasure>
+                  <ram:TypeCode listID="FA_CATCH_TYPE">DISCARDED</ram:TypeCode>
+                  <ram:SpecifiedSizeDistribution>
+                     <ram:ClassCode listID="FISH_SIZE_CLASS">LSC</ram:ClassCode>
+                  </ram:SpecifiedSizeDistribution>
+                  <ram:AppliedAAPProcess>
+                     <ram:TypeCode listID="FISH_PRESENTATION">GUT</ram:TypeCode>
+                     <ram:TypeCode listID="FISH_PRESERVATION">FRE</ram:TypeCode>
+                     <ram:ConversionFactorNumeric>1</ram:ConversionFactorNumeric>
+                     <ram:ResultAAPProduct>
+                        <ram:WeightMeasure unitCode="KGM">45</ram:WeightMeasure>
+                        <ram:PackagingUnitQuantity unitCode="C62">1</ram:PackagingUnitQuantity>
+                        <ram:PackagingTypeCode listID="FISH_PACKAGING">BOX</ram:PackagingTypeCode>
+                        <ram:PackagingUnitAverageWeightMeasure unitCode="KGM">1</ram:PackagingUnitAverageWeightMeasure>
+                     </ram:ResultAAPProduct>
+                  </ram:AppliedAAPProcess>
+               </ram:SpecifiedFACatch>
+			<ram:RelatedFLUXLocation>
+			<ram:TypeCode listID="FLUX_LOCATION_TYPE">POSITION</ram:TypeCode>
+				<ram:SpecifiedPhysicalFLUXGeographicalCoordinate>
+					<ram:LongitudeMeasure>-14.156</ram:LongitudeMeasure>
+					<ram:LatitudeMeasure>46.758</ram:LatitudeMeasure>
+				</ram:SpecifiedPhysicalFLUXGeographicalCoordinate>
+			</ram:RelatedFLUXLocation>
+               <ram:SpecifiedFishingGear>
+                  <ram:TypeCode listID="GEAR_TYPE">PS</ram:TypeCode>
+                  <ram:RoleCode listID="FA_GEAR_ROLE">ONBOARD</ram:RoleCode>
+                  <ram:ApplicableGearCharacteristic>
+                     <ram:TypeCode listID="FA_GEAR_CHARACTERISTIC">ME</ram:TypeCode>
+                     <ram:ValueMeasure unitCode="MMT">140</ram:ValueMeasure>
+                  </ram:ApplicableGearCharacteristic>
+                  <ram:ApplicableGearCharacteristic>
+                     <ram:TypeCode listID="FA_GEAR_CHARACTERISTIC">GM</ram:TypeCode>
+                     <ram:ValueMeasure unitCode="MTR">100</ram:ValueMeasure>
+                  </ram:ApplicableGearCharacteristic>
+                  <ram:ApplicableGearCharacteristic>
+                     <ram:TypeCode listID="FA_GEAR_CHARACTERISTIC">HE</ram:TypeCode>
+                     <ram:ValueMeasure unitCode="MTR">100</ram:ValueMeasure>
+                  </ram:ApplicableGearCharacteristic>
+               </ram:SpecifiedFishingGear>
+               <ram:SpecifiedFishingTrip>
+                  <ram:ID schemeID="EU_TRIP_ID">SRC-TRP-TTT20181017145656979</ram:ID>
+                  <ram:TypeCode listID="FISHING_TRIP_TYPE">JFO</ram:TypeCode>
+               </ram:SpecifiedFishingTrip>
+            </ram:SpecifiedFishingActivity>
+            <ram:SpecifiedVesselTransportMeans>
+               <ram:ID schemeID="CFR">CYP123456789</ram:ID>
+               <ram:Name>GOLF</ram:Name>
+               <ram:RoleCode listID="FA_VESSEL_ROLE">PAIR_FISHING_PARTNER</ram:RoleCode>
+               <ram:RegistrationVesselCountry>
+                  <ram:ID schemeID="TERRITORY">CYP</ram:ID>
+               </ram:RegistrationVesselCountry>
+               <ram:SpecifiedContactParty>
+                  <ram:RoleCode listID="FLUX_CONTACT_ROLE">MASTER</ram:RoleCode>
+                  <ram:SpecifiedStructuredAddress>
+                     <ram:StreetName>ll</ram:StreetName>
+                     <ram:CityName>CABOURG</ram:CityName>
+                     <ram:CountryID schemeID="TERRITORY">XEU</ram:CountryID>
+                     <ram:PlotIdentification>17</ram:PlotIdentification>
+                     <ram:PostalArea> 14390</ram:PostalArea>
+                  </ram:SpecifiedStructuredAddress>
+                  <ram:SpecifiedContactPerson>
+                  </ram:SpecifiedContactPerson>
+               </ram:SpecifiedContactParty>
+            </ram:SpecifiedVesselTransportMeans>
+         </rsm:FAReportDocument>
+      </rsm:FLUXFAReportMessage>
+      </urn:Connector2BridgeRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
