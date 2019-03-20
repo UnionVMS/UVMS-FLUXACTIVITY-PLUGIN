@@ -204,7 +204,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         postMsgType.setAD(adValue);
         postMsgType.setDF(dfValue);
         postMsgType.setAR(true);
-        postMsgType.setTO(1234);
+        postMsgType.setTO(123);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.add(Calendar.HOUR_OF_DAY,1);
         DateFormat fluxFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
