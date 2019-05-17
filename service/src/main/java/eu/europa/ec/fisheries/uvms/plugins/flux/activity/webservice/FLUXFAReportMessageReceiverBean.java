@@ -100,10 +100,10 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
                 ((SetFLUXFAReportMessageRequest) exchangeBaseRequest).setRequest(cleanFLUXReportMessage(faMessageXml));
                 break;
             case FLUXRESPONSE_MESSAGE:
-                exchangeBaseRequest = new SetFLUXFAResponseMessageRequest();
+                exchangeBaseRequest = new RcvFLUXFaResponseMessageRequest();
                 exchangeBaseRequest.setMethod(ExchangeModuleMethod.RCV_FLUX_FA_RESPONSE_MESSAGE);
                 exchangeBaseRequest.setMessageGuid(extractMessageGuidFromInputXML(faMessageXml, ActivityType.FLUX_RESPONSE));
-                ((SetFLUXFAResponseMessageRequest) exchangeBaseRequest).setRequest(cleanFLUXResponseMessage(faMessageXml));
+                ((RcvFLUXFaResponseMessageRequest) exchangeBaseRequest).setRequest(cleanFLUXResponseMessage(faMessageXml));
                 break;
             default:
                 exchangeBaseRequest = new SetFLUXFAReportMessageRequest();
