@@ -42,7 +42,7 @@ public class FluxFaPluginExchangeService {
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
                             , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue(), prop.getTodt(), prop.getTo(), prop.getAd());
                     break;
-                case FLUX_RESPONSE:
+                case FA_RESPONSE:
                     exchnageReqStr = ExchangeModuleRequestMapper.createFluxResponseRequest(receivedMessage, prop.getUsername()
                             , prop.getDFValue(), prop.getDate(), prop.getMessageGuid()
                             , prop.getPluginType(), prop.getSenderReceiver(), prop.getOnValue(), prop.getTodt(), prop.getTo(), prop.getAd());

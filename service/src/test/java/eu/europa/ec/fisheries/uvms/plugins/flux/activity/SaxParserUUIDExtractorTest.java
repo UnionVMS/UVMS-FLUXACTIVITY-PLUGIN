@@ -50,7 +50,7 @@ public class SaxParserUUIDExtractorTest {
     public void init(){
         faQueryUuidExtractor = new SaxParserUUIDExtractor(ActivityType.FA_QUERY);
         faReportUuidExtractor = new SaxParserUUIDExtractor(ActivityType.FA_REPORT);
-        faResponseUuidExtractor = new SaxParserUUIDExtractor(ActivityType.FLUX_RESPONSE);
+        faResponseUuidExtractor = new SaxParserUUIDExtractor(ActivityType.FA_RESPONSE);
 
         faQuerySample = getFileAsString(FAQUERYTESTXMLPATH);
         faReportSample = getFileAsString(FAREPORTTESTXMLPATH);

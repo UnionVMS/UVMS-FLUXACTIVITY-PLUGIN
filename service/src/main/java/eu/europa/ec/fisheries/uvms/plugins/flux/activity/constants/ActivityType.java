@@ -14,6 +14,6 @@ package eu.europa.ec.fisheries.uvms.plugins.flux.activity.constants;
 public enum ActivityType {
     FA_REPORT,
     FA_QUERY,
-    FLUX_RESPONSE,
+    FA_RESPONSE,
     UNKNOWN
 }

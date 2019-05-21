@@ -10,11 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.plugins.flux.activity;
 
-import javax.ejb.*;
-import javax.xml.ws.BindingProvider;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import xeu.connector_bridge.wsdl.v1.BridgeConnectorPortType;
 import xeu.connector_bridge.wsdl.v1.BridgeConnectorService;
+
+import javax.ejb.*;
+import javax.xml.ws.BindingProvider;
 
 /**
  * This class is intended to initiate the PortType for the intended WS-calls
@@ -31,6 +34,10 @@ public class PortInitiator {
     private BridgeConnectorPortType port;
 
     private boolean waitingForUrlConfigProperty = true;
+
+    @Getter
+    @Setter
+    private boolean wsIsSetup;
 
     @Lock(LockType.WRITE)
     public void setupPort(String url) {

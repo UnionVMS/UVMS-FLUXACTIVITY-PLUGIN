@@ -11,22 +11,23 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.plugins.flux.activity.jms.producer;
 
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAQueryRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAReportRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetFLUXFAResponseRequest;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
+import eu.europa.ec.fisheries.uvms.plugins.flux.activity.constants.ActivityType;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
+import java.util.*;
 
 @Stateless
 @LocalBean
@@ -47,6 +48,22 @@ public class FLUXMessageProducerBean extends AbstractProducer {
     @Override
     public String getDestinationName() {
         return MessageConstants.QUEUE_PLUGIN_BRIDGE;
+    }
+
+    public void sendMessageToBridgeQueue(PluginBaseRequest request, ActivityType msgType) throws MessageException {
+        log.info("Sending message through ::: JMS..");
+        String xmlMessage;
+        if (ActivityType.FA_RESPONSE.equals(msgType)){
+            xmlMessage = ((SetFLUXFAResponseRequest) request).getResponse();
+        } else if (ActivityType.FA_QUERY.equals(msgType)){
+            xmlMessage = ((SetFLUXFAQueryRequest) request).getResponse();
+        } else if (ActivityType.FA_REPORT.equals(msgType)){
+            xmlMessage = ((SetFLUXFAReportRequest) request).getResponse();
+        } else {
+            throw new IllegalArgumentException("The message forwarded from Exchange cannot be handeled by th system");
+        }
+        sendModuleMessageWithProps(xmlMessage, getDestination(), getFLUXMessageProperties(request));
+        log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), request.getDestination());
     }
 
     public Map<String, String> getFLUXMessageProperties(PluginBaseRequest pluginReq) {

@@ -57,7 +57,7 @@ public class SaxParserUUIDExtractor extends DefaultHandler {
             case FA_REPORT:
                 CONTAINER_TAG = FA_REPORT_DOCUMENT_UUID_CONTAINER_TAG;
                 break;
-            case FLUX_RESPONSE:
+            case FA_RESPONSE:
                 CONTAINER_TAG = FLUX_RESPONSE_UUID_CONTAINER_TAG;
                 break;
             case UNKNOWN:

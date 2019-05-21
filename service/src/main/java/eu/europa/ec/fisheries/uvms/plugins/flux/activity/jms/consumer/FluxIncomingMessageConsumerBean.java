@@ -103,7 +103,7 @@ public class FluxIncomingMessageConsumerBean implements MessageListener {
                     type = ActivityType.FA_QUERY;
                     break;
                 } else if (FLUXRESPONSE_MESSAGE_START_XSD_ELEMENT.equals(xml.getLocalName())) {
-                    type = ActivityType.FLUX_RESPONSE;
+                    type = ActivityType.FA_RESPONSE;
                     break;
                 }
             }
