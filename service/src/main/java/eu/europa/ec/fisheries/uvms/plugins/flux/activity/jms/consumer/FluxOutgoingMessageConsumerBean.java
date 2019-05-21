@@ -102,7 +102,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                             for (SettingType setting : settings) {
                                 String settingKey = setting.getKey();
                                 String settingValue = setting.getValue();
-                                if (settingKey.contains("FLUX_ENDPOINT")){
+                                if (settingKey.endsWith("FLUX_ENDPOINT")){
                                     if(StringUtils.isNotEmpty(settingValue)){
                                         portInitiator.setupPort(settingValue);
                                         portInitiator.setWsIsSetup(true);
