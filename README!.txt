@@ -1,6 +1,6 @@
 HOW TO POST TO THE WEB SERVICE OF THE PLUGIN :
 
-You can use a tool like posman
+You can use a tool like postman
 
 1. URL : {{hostname}}:8080/unionvms/activity-service/FLUXFAReportMessageService/FLUXFAReportMessageReceiverBean?wsdl
 2. Example message :

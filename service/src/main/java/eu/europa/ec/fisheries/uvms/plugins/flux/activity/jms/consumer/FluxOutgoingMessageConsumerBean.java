@@ -171,9 +171,12 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         if(portInitiator.isWsIsSetup()){
             log.info("Sending message through ::: WS..");
             PostMsgType postMsgType = getPostMsgType(request, msgType);
-            while(portInitiator.isWaitingForUrlConfigProperty()){
+            int waitingTimes = 120;
+            while(portInitiator.isWaitingForUrlConfigProperty() && waitingTimes > 0){
                 try {
+                    log.warn("Webservice needs to wait for the URL to be set up. Waiting for the {} time (MAX 60 Times)", waitingTimes);
                     Thread.sleep(1000);
+                    waitingTimes--;
                 } catch (InterruptedException ignored) {
                 }
             }
