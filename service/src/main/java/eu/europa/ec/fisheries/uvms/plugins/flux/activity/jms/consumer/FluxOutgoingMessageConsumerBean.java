@@ -77,7 +77,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             PluginBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginBaseRequest.class);
             int timesRedelivered = getTimesRedelivered(inMessage);
-            if (timesRedelivered > 0){
+            if (timesRedelivered > 0) {
                 log.info("Received method {}, redelivered {} times", request.getMethod(), getTimesRedelivered(inMessage));
             }
             switch (request.getMethod()) {
@@ -93,17 +93,17 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                     SetFLUXFAQueryRequest activityQueryRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAQueryRequest.class);
                     sendActivityQueryToFlux(activityQueryRequest);
                     break;
-                case SET_CONFIG :
+                case SET_CONFIG:
                     SetConfigRequest setConfig = JAXBMarshaller.unmarshallTextMessage(textMessage, SetConfigRequest.class);
                     SettingListType configurations = setConfig.getConfigurations();
-                    if (configurations != null){
+                    if (configurations != null) {
                         List<SettingType> settings = configurations.getSetting();
-                        if (CollectionUtils.isNotEmpty(settings)){
+                        if (CollectionUtils.isNotEmpty(settings)) {
                             for (SettingType setting : settings) {
                                 String settingKey = setting.getKey();
                                 String settingValue = setting.getValue();
-                                if (settingKey.endsWith("FLUX_ENDPOINT")){
-                                    if(StringUtils.isNotEmpty(settingValue)){
+                                if (settingKey.endsWith("FLUX_ENDPOINT")) {
+                                    if (StringUtils.isNotEmpty(settingValue)) {
                                         portInitiator.setupPort(settingValue);
                                         portInitiator.setWsIsSetup(true);
                                         log.info("Activated the WS OUT service with endpoint : [{}]", settingValue);
@@ -117,7 +117,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                         }
                     }
                     break;
-                case START :
+                case START:
                     StartRequest startReq = JAXBMarshaller.unmarshallTextMessage(textMessage, StartRequest.class);
                     log.info("[STARTED] Plugin was started!");
                     break;
@@ -143,7 +143,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
     private void sendActivityReportToFlux(SetFLUXFAReportRequest request) throws PluginException {
         try {
             postRequest(request, ActivityType.FA_REPORT);
-        } catch (MappingException | DatatypeConfigurationException | JAXBException ex) {
+        } catch (MappingException | DatatypeConfigurationException | JAXBException | MessageException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
         }
@@ -152,7 +152,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
     private void sendActivityResponseToFlux(SetFLUXFAResponseRequest request) throws PluginException {
         try {
             postRequest(request, ActivityType.FA_RESPONSE);
-        } catch (MappingException | DatatypeConfigurationException | JAXBException ex) {
+        } catch (MappingException | DatatypeConfigurationException | JAXBException | MessageException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
         }
@@ -161,45 +161,45 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
     private void sendActivityQueryToFlux(SetFLUXFAQueryRequest request) throws PluginException {
         try {
             postRequest(request, ActivityType.FA_QUERY);
-        } catch (MappingException | JAXBException | DatatypeConfigurationException ex) {
+        } catch (MappingException | JAXBException | DatatypeConfigurationException | MessageException ex) {
             log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
             throw new PluginException(ex);
         }
     }
 
-    private void postRequest(PluginBaseRequest request, ActivityType msgType) throws JAXBException, DatatypeConfigurationException, MappingException {
-        if(portInitiator.isWsIsSetup()){
-            log.info("Sending message through ::: WS..");
-            PostMsgType postMsgType = getPostMsgType(request, msgType);
-            int waitingTimes = 120;
-            while(portInitiator.isWaitingForUrlConfigProperty() && waitingTimes > 0){
-                try {
-                    log.warn("Webservice needs to wait for the URL to be set up. Waiting for the {} time (MAX 60 Times)", waitingTimes);
-                    Thread.sleep(1000);
-                    waitingTimes--;
-                } catch (InterruptedException ignored) {
-                }
-            }
-            BridgeConnectorPortType port = portInitiator.getPort();
-            BindingProvider bp = (BindingProvider) port;
-            bp.getRequestContext().put(CONNECTOR_ID, startupBean.getSetting(CLIENT_ID));
-            String endPoint = ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString();
-            try {
-                port.post(postMsgType);
-                log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), endPoint);
-            } catch (WebServiceException | NullPointerException ex){
-                log.error("[ERROR] Couldn't send message to {}", endPoint, ex.getCause());
-            }
+    private void postRequest(PluginBaseRequest request, ActivityType msgType) throws JAXBException, DatatypeConfigurationException, MappingException, MessageException {
+        if (portInitiator.isWsIsSetup()) {
+            sendMessageThroughWS(request, msgType);
         } else {
-            try {
-                jmsProducer.sendMessageToBridgeQueue(request, msgType);
-            } catch (MessageException e) {
-                log.error("Error while trying to send message to Bridge queue.. {}", e);
-            }
+            jmsProducer.sendMessageToBridgeQueue(request, msgType);
         }
     }
 
-    private PostMsgType getPostMsgType(PluginBaseRequest request,  ActivityType msgType) throws DatatypeConfigurationException, MappingException, JAXBException {
+    private void sendMessageThroughWS(PluginBaseRequest request, ActivityType msgType) throws DatatypeConfigurationException, MappingException, JAXBException {
+        log.info("[WEBSERVICE] Sending message outside of FLUX-FMC through :::-->>> WS\n\n");
+        PostMsgType postMsgType = getPostMsgType(request, msgType);
+        int waitingTimes = 120;
+        while (portInitiator.isWaitingForUrlConfigProperty() && waitingTimes > 0) {
+            try {
+                log.warn("Webservice needs to wait for the URL to be set up. Waiting for the {} time (MAX 60 Times)", waitingTimes);
+                Thread.sleep(1000);
+                waitingTimes--;
+            } catch (InterruptedException ignored) {
+            }
+        }
+        BridgeConnectorPortType port = portInitiator.getPort();
+        BindingProvider bp = (BindingProvider) port;
+        bp.getRequestContext().put(CONNECTOR_ID, startupBean.getSetting(CLIENT_ID));
+        String endPoint = ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString();
+        try {
+            port.post(postMsgType);
+            log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), endPoint);
+        } catch (WebServiceException | NullPointerException ex) {
+            log.error("[ERROR] Couldn't send message to {}", endPoint, ex.getCause());
+        }
+    }
+
+    private PostMsgType getPostMsgType(PluginBaseRequest request, ActivityType msgType) throws DatatypeConfigurationException, MappingException, JAXBException {
         PostMsgType postMsgType = new PostMsgType();
         postMsgType.setAD(request.getDestination());
         postMsgType.setDF(request.getFluxDataFlow());
@@ -209,13 +209,13 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         calendar.setTime(new Date());
         postMsgType.setTODT(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
         String response;
-        if (ActivityType.FA_RESPONSE.equals(msgType)){
+        if (ActivityType.FA_RESPONSE.equals(msgType)) {
             response = ((SetFLUXFAResponseRequest) request).getResponse();
             postMsgType.setAny(marshalToDOM(JAXBUtils.unMarshallMessage(response, FLUXResponseMessage.class)));
-        } else if (ActivityType.FA_QUERY.equals(msgType)){
+        } else if (ActivityType.FA_QUERY.equals(msgType)) {
             response = ((SetFLUXFAQueryRequest) request).getResponse();
             postMsgType.setAny(marshalToDOM(JAXBUtils.unMarshallMessage(response, FLUXFAQueryMessage.class)));
-        } else if (ActivityType.FA_REPORT.equals(msgType)){
+        } else if (ActivityType.FA_REPORT.equals(msgType)) {
             response = ((SetFLUXFAReportRequest) request).getResponse();
             postMsgType.setAny(marshalToDOM(JAXBUtils.unMarshallMessage(response, FLUXFAReportMessage.class)));
         }

@@ -85,7 +85,7 @@ public class FluxIncomingMessageConsumerBean implements MessageListener {
                 log.error("[FATAL] Error while trying to send Flux FAReport message to exchange", e);
             }
         }
-        log.info("Consumed one [ {} ] in FaPlugin...\n", faMessageType);
+        log.debug("Consumed one [ {} ] in FaPlugin...\n", faMessageType);
     }
 
 
@@ -131,7 +131,7 @@ public class FluxIncomingMessageConsumerBean implements MessageListener {
         exchangeMessageProperties.setOnValue(extractStringPropertyFromJMSTextMessage(textMessage, ON));
         exchangeMessageProperties.setAd(extractStringPropertyFromJMSTextMessage(textMessage, AD));
         exchangeMessageProperties.setMessageGuid(type != UNKNOWN ? extractMessageGuidFromInputXML(textMessage.getText(), type) : StringUtils.EMPTY);
-        log.info("Properties read from the message:" + exchangeMessageProperties);
+        log.debug("Properties read from the message:" + exchangeMessageProperties);
         return exchangeMessageProperties;
     }
 

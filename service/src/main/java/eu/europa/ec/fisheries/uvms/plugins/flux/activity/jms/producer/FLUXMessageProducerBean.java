@@ -24,6 +24,8 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -50,8 +52,9 @@ public class FLUXMessageProducerBean extends AbstractProducer {
         return MessageConstants.QUEUE_PLUGIN_BRIDGE;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void sendMessageToBridgeQueue(PluginBaseRequest request, ActivityType msgType) throws MessageException {
-        log.info("Sending message through ::: JMS..");
+        log.info("[JMS] Sending message outside of FLUX-FMC through :::-->>> JMS");
         String xmlMessage;
         if (ActivityType.FA_RESPONSE.equals(msgType)){
             xmlMessage = ((SetFLUXFAResponseRequest) request).getResponse();
@@ -63,7 +66,7 @@ public class FLUXMessageProducerBean extends AbstractProducer {
             throw new IllegalArgumentException("The message forwarded from Exchange cannot be handeled by th system");
         }
         sendModuleMessageWithProps(xmlMessage, getDestination(), getFLUXMessageProperties(request));
-        log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), request.getDestination());
+        log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}] \n\n", msgType, request.getOnValue(), request.getDestination());
     }
 
     public Map<String, String> getFLUXMessageProperties(PluginBaseRequest pluginReq) {
