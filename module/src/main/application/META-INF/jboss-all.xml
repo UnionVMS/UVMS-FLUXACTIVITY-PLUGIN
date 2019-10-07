@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss umlns="urn:jboss:1.0">
     <jboss-deployment-dependencies xmlns="urn:jboss:deployment-dependencies:1.0">
-        <dependency name="user-module-${jboss.all.user.dependency.version}.ear"/>
-        <dependency name="config-module-${jboss.all.config.dependency.version}.ear"/>
+        <dependency name="${jboss.all.user.dependency}"/>
+        <dependency name="${jboss.all.config.dependency}"/>
     </jboss-deployment-dependencies>
 </jboss>

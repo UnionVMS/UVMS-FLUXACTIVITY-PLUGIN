@@ -41,9 +41,18 @@
         <lombok.version>1.16.18</lombok.version>
 
         <!-- jboss-all.xml dependency properties -->
+        <!--
+            These properties are used to build the module/src/main/application/META-INF/jboss-all.xml.
+            Since the needs for local deployment are different from those of production, the jboss.all.*.dependency
+            properties can be overridden in your local settings.xml. The following snippet should work:
+
+                <jboss.all.user.dependency>user-module.ear</jboss.all.user.dependency>
+                <jboss.all.config.dependency>config-module.ear</jboss.all.config.dependency>
+        -->
         <jboss.all.user.dependency.version>2.0.15-W14J8</jboss.all.user.dependency.version>
         <jboss.all.config.dependency.version>4.0.13-W14J8</jboss.all.config.dependency.version>
-
+        <jboss.all.user.dependency>user-module-${jboss.all.user.dependency.version}.ear</jboss.all.user.dependency>
+        <jboss.all.config.dependency>config-module-${jboss.all.user.dependency}.ear</jboss.all.config.dependency>
     </properties>
 
     <dependencies>
