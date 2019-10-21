@@ -4,16 +4,16 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
     <artifactId>flux-activity-plugin</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>${uvms.plugins.flux.activity.version}</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
 
-    <parent>
-        <groupId>fish.focus.uvms.maven</groupId>
-        <artifactId>uvms-pom</artifactId>
-        <relativePath />
-        <version>1.21</version>
-    </parent>
+  <parent>
+    <groupId>eu.europa.ec.fisheries.uvms</groupId>
+    <artifactId>mare-pom</artifactId>
+    <version>1.6.0-MARE</version>
+    <relativePath />
+  </parent>
 
     <properties>
         <maven.release.plugin.version>2.5.2</maven.release.plugin.version>
@@ -26,12 +26,13 @@
         <sl4j.version>1.7.7</sl4j.version>
         <logback.version>1.1.2</logback.version>
         <logback.core.version>1.1.2</logback.core.version>
-        <audit.model.version>2.0.3</audit.model.version>
-        <activity.model>1.0.8</activity.model>
         <commons.lang.version>2.6</commons.lang.version>
         <jboss.connector.api.version>RELEASE</jboss.connector.api.version>
-        <uvms.commons.version>3.3-W14J8</uvms.commons.version>
-        <exchange.model.version>4.0.23</exchange.model.version>
+        
+        <uvms.commons.version>${uvms.commonsLibrary.version}</uvms.commons.version>
+        <exchange.model.version>${uvms.exchange.model.version}</exchange.model.version>
+        <activity.model>${uvms.activity.model.version}</activity.model>
+        
         <!-- Dependencies needed just for the testing WS -->
         <connector-bridge.client.version>2.0.1</connector-bridge.client.version>
         <bridge-connector.client.version>2.0.1</bridge-connector.client.version>
@@ -49,8 +50,8 @@
                 <jboss.all.user.dependency>user-module.ear</jboss.all.user.dependency>
                 <jboss.all.config.dependency>config-module.ear</jboss.all.config.dependency>
         -->
-        <jboss.all.user.dependency.version>2.0.15-W14J8</jboss.all.user.dependency.version>
-        <jboss.all.config.dependency.version>4.0.13-W14J8</jboss.all.config.dependency.version>
+        <jboss.all.user.dependency.version>${uvms.user.module.version}</jboss.all.user.dependency.version>
+        <jboss.all.config.dependency.version>${uvms.config.module.version}</jboss.all.config.dependency.version>
         <jboss.all.user.dependency>user-module-${jboss.all.user.dependency.version}.ear</jboss.all.user.dependency>
         <jboss.all.config.dependency>config-module-${jboss.all.user.dependency}.ear</jboss.all.config.dependency>
     </properties>
