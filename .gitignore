@@ -4,3 +4,7 @@ target
 target/**
 plugin.properties
 .flattened-pom.xml
+.project
+.classpath
+.settings/
+pom.xml.versionsBackup
