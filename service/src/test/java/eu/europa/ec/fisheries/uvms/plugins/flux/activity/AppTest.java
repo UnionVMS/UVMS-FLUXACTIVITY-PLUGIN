@@ -1,4 +1,4 @@
-package eu.europa.ec.fisheries.uvms.plugins.fluxActivity;
+package eu.europa.ec.fisheries.uvms.plugins.flux.activity;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
