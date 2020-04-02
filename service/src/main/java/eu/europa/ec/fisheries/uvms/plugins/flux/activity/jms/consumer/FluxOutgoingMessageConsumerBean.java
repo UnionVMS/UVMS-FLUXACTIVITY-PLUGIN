@@ -204,7 +204,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         postMsgType.setAD(request.getDestination());
         postMsgType.setDF(request.getFluxDataFlow());
         postMsgType.setAR(true);
-        postMsgType.setTO(1234);
+        postMsgType.setTO(60);
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());
         postMsgType.setTODT(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
