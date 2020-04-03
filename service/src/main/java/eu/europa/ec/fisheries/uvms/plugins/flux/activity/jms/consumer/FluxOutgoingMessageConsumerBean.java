@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.flux.activity.PortInitiator;
 import eu.europa.ec.fisheries.uvms.plugins.flux.activity.StartupBean;
@@ -15,6 +16,7 @@ import eu.europa.ec.fisheries.uvms.plugins.flux.activity.constants.ActivityType;
 import eu.europa.ec.fisheries.uvms.plugins.flux.activity.exception.MappingException;
 import eu.europa.ec.fisheries.uvms.plugins.flux.activity.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.flux.activity.jms.producer.FLUXMessageProducerBean;
+import eu.europa.ec.fisheries.uvms.plugins.flux.activity.jms.producer.PluginToExchangeProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,8 @@ import org.w3c.dom.Element;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import xeu.connector_bridge.v1.AssignedONType;
+import xeu.connector_bridge.v1.PostMsgOutType;
 import xeu.connector_bridge.v1.PostMsgType;
 import xeu.connector_bridge.wsdl.v1.BridgeConnectorPortType;
 
@@ -70,6 +74,9 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
 
     @EJB
     private FLUXMessageProducerBean jmsProducer;
+
+    @EJB
+    private PluginToExchangeProducer exchangeProducer;
 
     @Override
     public void onMessage(Message inMessage) {
@@ -192,11 +199,25 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         bp.getRequestContext().put(CONNECTOR_ID, startupBean.getSetting(CLIENT_ID));
         String endPoint = ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString();
         try {
-            port.post(postMsgType);
+            PostMsgOutType post = port.post(postMsgType);
+            List<AssignedONType> assignedON = post.getAssignedON();
+            upgradeResponseWithOnMessage(assignedON,request.getResponseLogGuid());
             log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), endPoint);
         } catch (WebServiceException | NullPointerException ex) {
             log.error("[ERROR] Couldn't send message to {}", endPoint, ex.getCause());
         }
+    }
+
+    private void upgradeResponseWithOnMessage(List<AssignedONType> assignedOn,String responseGuid)  {
+       String onValue = assignedOn.isEmpty()? null:assignedOn.get(0).getON();
+
+        try {
+            String stringMessage = ExchangeModuleRequestMapper.createUpdateOnMessageRequest(onValue, responseGuid);
+            exchangeProducer.sendModuleMessage(stringMessage, null);
+        } catch (ExchangeModelMarshallException | MessageException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private PostMsgType getPostMsgType(PluginBaseRequest request, ActivityType msgType) throws DatatypeConfigurationException, MappingException, JAXBException {
