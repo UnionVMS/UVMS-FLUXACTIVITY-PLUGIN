@@ -142,6 +142,7 @@ public class FluxIncomingMessageConsumerBean implements MessageListener {
         try {
             saxParserForFaFLUXMessge.parseDocument(message);
         } catch (SAXException | NullPointerException e) {
+            log.info("retreiving uuid value",e);
             messageGuid = saxParserForFaFLUXMessge.getUuidValue();
         }
         return messageGuid;

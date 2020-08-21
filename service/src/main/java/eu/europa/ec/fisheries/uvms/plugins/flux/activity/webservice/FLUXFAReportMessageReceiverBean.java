@@ -149,6 +149,7 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
         try {
             saxParserForFaFLUXMessge.parseDocument(message);
         } catch (SAXException | NullPointerException e) {
+            log.info("retreiving uuid from message",e);
             messageGuid = saxParserForFaFLUXMessge.getUuidValue();
         }
         return messageGuid;
