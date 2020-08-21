@@ -133,9 +133,9 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                     break;
             }
         } catch (ExchangeModelMarshallException | NullPointerException ex) {
-            log.error("[ Error when receiving message in flux " + startupBean.getRegisterClassName() + " ]", ex);
+            log.error("Error when receiving message in flux " + startupBean.getRegisterClassName() , ex);
         } catch (PluginException ex) {
-            log.error("[ Error when handling JMS message in flux " + startupBean.getRegisterClassName() + " ]", ex);
+            log.error("Error when handling JMS message in flux " + startupBean.getRegisterClassName() , ex);
         }
     }
 
@@ -143,6 +143,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             return (message.getIntProperty("JMSXDeliveryCount") - 1);
         } catch (Exception e) {
+            log.error("Could not retrieve property JMSXDeliveryCount",e);
             return 0;
         }
     }
@@ -151,8 +152,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             postRequest(request, ActivityType.FA_REPORT);
         } catch (MappingException | DatatypeConfigurationException | JAXBException | MessageException ex) {
-            log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
-            throw new PluginException(ex);
+            throw new PluginException(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX,ex);
         }
     }
 
@@ -160,8 +160,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             postRequest(request, ActivityType.FA_RESPONSE);
         } catch (MappingException | DatatypeConfigurationException | JAXBException | MessageException ex) {
-            log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
-            throw new PluginException(ex);
+            throw new PluginException(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX,ex);
         }
     }
 
@@ -169,8 +168,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         try {
             postRequest(request, ActivityType.FA_QUERY);
         } catch (MappingException | JAXBException | DatatypeConfigurationException | MessageException ex) {
-            log.error(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX, ex.getMessage());
-            throw new PluginException(ex);
+            throw new PluginException(ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX,ex);
         }
     }
 
@@ -192,6 +190,7 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                 Thread.sleep(1000);
                 waitingTimes--;
             } catch (InterruptedException ignored) {
+                log.error("thread interruption excpetion",ignored);
             }
         }
         BridgeConnectorPortType port = portInitiator.getPort();
@@ -204,18 +203,18 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
             upgradeResponseWithOnMessage(assignedON,request.getResponseLogGuid());
             log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), endPoint);
         } catch (WebServiceException | NullPointerException ex) {
-            log.error("[ERROR] Couldn't send message to {}", endPoint, ex.getCause());
+            log.error("[ERROR] Couldn't send message to endpoint: " + endPoint, ex);
         }
     }
 
     private void upgradeResponseWithOnMessage(List<AssignedONType> assignedOn,String responseGuid)  {
        String onValue = assignedOn.isEmpty()? null:assignedOn.get(0).getON();
-
+        String stringMessage = null;
         try {
-            String stringMessage = ExchangeModuleRequestMapper.createUpdateOnMessageRequest(onValue, responseGuid);
+            stringMessage = ExchangeModuleRequestMapper.createUpdateOnMessageRequest(onValue, responseGuid);
             exchangeProducer.sendModuleMessage(stringMessage, null);
         } catch (ExchangeModelMarshallException | MessageException e) {
-            e.printStackTrace();
+            log.error("Couldn't send message: " + stringMessage + " with onValue: " + onValue,e);
         }
 
     }

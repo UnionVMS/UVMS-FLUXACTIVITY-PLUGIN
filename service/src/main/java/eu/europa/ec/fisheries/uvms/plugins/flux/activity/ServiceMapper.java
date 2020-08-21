@@ -66,7 +66,7 @@ public class ServiceMapper {
             try {
                 setting.setType(CapabilityTypeType.valueOf(tmp.getKey()));
             } catch (Exception e) {
-                LOG.error("Error when parsing to Enum type from String KEY: {}", tmp.getKey(), e);
+                LOG.error("Error when parsing to Enum type from String KEY: " + tmp.getKey(), e);
             }
             setting.setValue(tmp.getValue());
             capabilityListType.getCapability().add(setting);

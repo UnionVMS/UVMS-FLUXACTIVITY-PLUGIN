@@ -58,7 +58,7 @@ public class PluginAckEventBusListener implements MessageListener {
                     break;
             }
         } catch (ExchangeModelMarshallException | NullPointerException e) {
-            log.error("[ Error when receiving message in fishingActivity ]", e);
+            log.error("Error when receiving message in fishingActivity", e);
         }
     }
 
