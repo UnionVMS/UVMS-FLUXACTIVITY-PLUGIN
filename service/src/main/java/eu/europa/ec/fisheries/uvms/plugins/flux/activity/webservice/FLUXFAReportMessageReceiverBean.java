@@ -53,7 +53,7 @@ import xeu.bridge_connector.wsdl.v1.BridgeConnectorPortType;
 @Slf4j
 public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType {
 
-    private static final String ISO_8859_1 = "ISO-8859-1";
+    private static final String ENCODING = "UTF-8";
     private static final String FLUXFAQUERY_MESSAGE = "FLUXFAQueryMessage";
     private static final String FLUXFAREPORT_MESSAGE = "FLUXFAReportMessage";
     private static final String FLUXRESPONSE_MESSAGE = "FLUXResponseMessage";
@@ -112,14 +112,14 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
                 break;
         }
         populateCommonProperties(exchangeBaseRequest, rt, otherAttributes.get(new QName("USER")), otherAttributes.get(new QName("FR")));
-        exchange.sendModuleMessage(JAXBUtils.marshallJaxBObjectToString(exchangeBaseRequest, ISO_8859_1, true), null);
+        exchange.sendModuleMessage(JAXBUtils.marshallJaxBObjectToString(exchangeBaseRequest, ENCODING, true), null);
     }
 
     private String ripXMLMessageFromRequest(Element element) throws TransformerException {
         StreamResult result = new StreamResult(new StringWriter());
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING);
         transformer.transform(new DOMSource(element), result);
-        transformer.setOutputProperty(OutputKeys.ENCODING, ISO_8859_1);
         return result.getWriter().toString();
     }
 
@@ -163,7 +163,7 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
         }
         try {
             FLUXResponseMessage fluxResponseMessage = JAXBUtils.unMarshallMessage(fluxFAResponse, FLUXResponseMessage.class);
-            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, ISO_8859_1, true);
+            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, ENCODING, true);
         } catch (JAXBException e) {
             log.error("PluginException when trying to clean FLUXResponse", e);
         }
@@ -178,7 +178,7 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
         }
         try {
             FLUXFAReportMessage fluxResponseMessage = JAXBUtils.unMarshallMessage(faReportMessageWrapper, FLUXFAReportMessage.class);
-            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, ISO_8859_1, true);
+            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, ENCODING, true);
         } catch (JAXBException e) {
             log.error("PluginException when trying to clean FLUXFAReportMessage", e);
         }
@@ -193,7 +193,7 @@ public class FLUXFAReportMessageReceiverBean implements BridgeConnectorPortType 
         }
         try {
             FLUXFAQueryMessage fluxResponseMessage = JAXBUtils.unMarshallMessage(faQueryMessageWrapper, FLUXFAQueryMessage.class);
-            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, ISO_8859_1, true);
+            cleanXMLMessage = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, ENCODING, true);
         } catch (JAXBException e) {
             log.error("PluginException when trying to clean FLUXFAQueryMessage", e);
         }
