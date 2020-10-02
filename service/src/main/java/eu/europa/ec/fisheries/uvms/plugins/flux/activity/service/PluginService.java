@@ -93,7 +93,7 @@ public class PluginService {
             }
             return AcknowledgeTypeType.OK;
         } catch (Exception e) {
-            LOG.error("Failed to set config in {}", startupBean.getRegisterClassName(),e);
+            LOG.error("Failed to set config in " + startupBean.getRegisterClassName(),e);
             return AcknowledgeTypeType.NOK;
         }
 
@@ -111,7 +111,7 @@ public class PluginService {
             return AcknowledgeTypeType.OK;
         } catch (Exception e) {
             startupBean.setIsEnabled(Boolean.FALSE);
-            LOG.error("Failed to start {}", startupBean.getRegisterClassName(),e);
+            LOG.error("Failed to start " + startupBean.getRegisterClassName(),e);
             return AcknowledgeTypeType.NOK;
         }
 
@@ -129,7 +129,7 @@ public class PluginService {
             return AcknowledgeTypeType.OK;
         } catch (Exception e) {
             startupBean.setIsEnabled(Boolean.TRUE);
-            LOG.error("Failed to stop {}", startupBean.getRegisterClassName(),e);
+            LOG.error("Failed to stop " + startupBean.getRegisterClassName(),e);
             return AcknowledgeTypeType.NOK;
         }
     }

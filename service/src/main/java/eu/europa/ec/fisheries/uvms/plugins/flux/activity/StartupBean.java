@@ -101,7 +101,7 @@ public class StartupBean extends PluginDataHolder {
             String registerServiceRequest = ExchangeModuleRequestMapper.createRegisterServiceRequest(serviceType, capabilities, settingList);
             messageProducer.sendEventBusMessage(registerServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("Failed to send registration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
+            log.error("Failed to send registration message to " + ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
             setWaitingForResponse(false);
         }
     }
@@ -112,7 +112,7 @@ public class StartupBean extends PluginDataHolder {
             String unregisterServiceRequest = ExchangeModuleRequestMapper.createUnregisterServiceRequest(serviceType);
             messageProducer.sendEventBusMessage(unregisterServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         } catch (MessageException | ExchangeModelMarshallException e) {
-            log.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
+            log.error("Failed to send unregistration message to " + ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE,e);
         }
     }
 
@@ -120,7 +120,7 @@ public class StartupBean extends PluginDataHolder {
         try {
             return (String) super.getPluginApplicaitonProperties().get(key);
         } catch (Exception e) {
-            log.error("Failed to getSetting for key: " + key, getRegisterClassName(),e);
+            log.error("Failed to getSetting for key: " + key + " class:" + getRegisterClassName(),e);
             return null;
         }
     }
@@ -130,7 +130,7 @@ public class StartupBean extends PluginDataHolder {
             log.debug("Trying to get setting {} ", registeredClassName + "." + key);
             return super.getSettings().get(registeredClassName + "." + key);
         } catch (Exception e) {
-            log.error("Failed to getSetting for key: " + key, registeredClassName,e);
+            log.error("Failed to getSetting for key: " + key + " class:" + registeredClassName,e);
             return null;
         }
     }
