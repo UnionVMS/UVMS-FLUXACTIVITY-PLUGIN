@@ -18,6 +18,8 @@ import xeu.connector_bridge.wsdl.v1.BridgeConnectorService;
 
 import javax.ejb.*;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
+import java.util.Collections;
 
 /**
  * This class is intended to initiate the PortType for the intended WS-calls
@@ -27,6 +29,9 @@ import javax.xml.ws.BindingProvider;
 @Startup
 @Slf4j
 public class PortInitiator {
+
+    private static final String CLIENT_ID = "CLIENT_ID";
+    private static final String CONNECTOR_ID = "connectorID";
 
     @EJB
     private StartupBean startupBean;
@@ -47,6 +52,7 @@ public class PortInitiator {
         BridgeConnectorPortType newPort = service.getBridgeConnectorSOAP11Port();
         BindingProvider bp = (BindingProvider) newPort;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+        bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, Collections.singletonMap(CONNECTOR_ID, Collections.singletonList(startupBean.getSetting(CLIENT_ID))));
         waitingForUrlConfigProperty = false;
         port = newPort;
     }

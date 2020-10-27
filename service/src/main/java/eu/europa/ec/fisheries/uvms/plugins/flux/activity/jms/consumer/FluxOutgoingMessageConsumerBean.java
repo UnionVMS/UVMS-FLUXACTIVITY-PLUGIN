@@ -44,7 +44,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
 import java.util.List;
 
 @MessageDriven(mappedName = MessageConstants.EVENT_BUS_TOPIC, activationConfig = {
@@ -59,8 +58,6 @@ import java.util.List;
 @Slf4j
 public class FluxOutgoingMessageConsumerBean implements MessageListener {
 
-    private static final String CLIENT_ID = "CLIENT_ID";
-    private static final String CONNECTOR_ID = "connectorID";
     private static final String ERROR_WHEN_SENDING_ACTIVITY_REPORT_TO_FLUX = "[ Error when sending activity report to FLUX. ] {}";
 
     @EJB
@@ -191,15 +188,13 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
             }
         }
         BridgeConnectorPortType port = portInitiator.getPort();
-        BindingProvider bp = (BindingProvider) port;
-        bp.getRequestContext().put(CONNECTOR_ID, startupBean.getSetting(CLIENT_ID));
         String endPoint = ((BindingProvider) port).getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY).toString();
         try {
             PostMsgOutType post = port.post(postMsgType);
             List<AssignedONType> assignedON = post.getAssignedON();
             upgradeResponseWithOnMessage(assignedON,request.getResponseLogGuid());
             log.info("[INFO] Outgoing message ({}) with ON :[{}] send to [{}]", msgType, request.getOnValue(), endPoint);
-        } catch (WebServiceException | NullPointerException ex) {
+        } catch (NullPointerException ex) {
             log.error("[ERROR] Couldn't send message to endpoint: " + endPoint, ex);
         }
     }
