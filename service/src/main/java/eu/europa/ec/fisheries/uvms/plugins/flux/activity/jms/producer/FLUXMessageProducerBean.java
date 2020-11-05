@@ -20,15 +20,11 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import eu.europa.ec.fisheries.uvms.plugins.flux.activity.constants.ActivityType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 @Stateless
@@ -39,12 +35,7 @@ public class FLUXMessageProducerBean extends AbstractProducer {
     private static final String FLUX_ENV_AD = "AD";
     private static final String FLUX_ENV_DF = "DF";
     private static final String BUSINESS_UUID = "BUSINESS_UUID";
-    private static final String FLUX_ENV_TODT = "TODT";
-    private static final String FLUX_ENV_AR = "AR";
     private static final String FLUX_ENV_FR = "FR";
-    private static final String FLUX_ENV_TO = "TO";
-    private static final String FLUX_ENV_CT = "CT";
-    private static final String FLUX_ENV_VB = "VB";
     private static final String ON = "ON";
 
     @Override
@@ -77,11 +68,6 @@ public class FLUXMessageProducerBean extends AbstractProducer {
             messageProperties.put(FLUXMessageProducerBean.FLUX_ENV_DF, pluginReq.getFluxDataFlow());
             messageProperties.put(FLUXMessageProducerBean.BUSINESS_UUID, pluginReq.getOnValue());
             messageProperties.put(FLUXMessageProducerBean.ON, createBusinessUUID());
-            messageProperties.put(FLUXMessageProducerBean.FLUX_ENV_TODT, createStringDate());
-            messageProperties.put(FLUXMessageProducerBean.FLUX_ENV_AR, "true");
-            messageProperties.put(FLUXMessageProducerBean.FLUX_ENV_TO, "60");
-            messageProperties.put(FLUXMessageProducerBean.FLUX_ENV_CT, "admin@dgmare.com");
-            messageProperties.put(FLUXMessageProducerBean.FLUX_ENV_VB, "ERROR");
         } else {
             log.error("PluginBaseRequest is null so, could not set AD/FR/DF values to the FLUXMEssage");
         }
@@ -95,19 +81,5 @@ public class FLUXMessageProducerBean extends AbstractProducer {
      */
     private String createBusinessUUID() {
         return UUID.randomUUID().toString();
-    }
-
-    private String createStringDate() {
-        GregorianCalendar gcal = (GregorianCalendar) GregorianCalendar.getInstance();
-        Date newDate = DateUtils.addHours(new Date(), 3);
-        gcal.setTime(newDate);
-        XMLGregorianCalendar xgcal;
-        try {
-            xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-            return xgcal.toString();
-        } catch (DatatypeConfigurationException | NullPointerException e) {
-            log.error("Error occured while creating newXMLGregorianCalendar", e);
-            return null;
-        }
     }
 }

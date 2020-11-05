@@ -40,14 +40,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @MessageDriven(mappedName = MessageConstants.EVENT_BUS_TOPIC, activationConfig = {
@@ -219,11 +216,6 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
         PostMsgType postMsgType = new PostMsgType();
         postMsgType.setAD(request.getDestination());
         postMsgType.setDF(request.getFluxDataFlow());
-        postMsgType.setAR(true);
-        postMsgType.setTO(60);
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        postMsgType.setTODT(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
         String response;
         if (ActivityType.FA_RESPONSE.equals(msgType)) {
             response = ((SetFLUXFAResponseRequest) request).getResponse();
