@@ -17,7 +17,7 @@
         <application.responseTopicName>PLUGIN_RESPONSE</application.responseTopicName> 
         <application.groupid>${project.parent.groupId}</application.groupid> 
         <application.version>${project.parent.version}</application.version>
-        <application.logfile>${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
+        <application.logfile>${project.parent.artifactId}.log</application.logfile>
         <application.logfile.message.pattern>%replace(%rEx){'[\r\n]+', '~~'}%nopex %n</application.logfile.message.pattern>
         <provider.url>http-remoting://10.155.0.10:8180</provider.url>
         <security.principal.id>fluxq</security.principal.id>
