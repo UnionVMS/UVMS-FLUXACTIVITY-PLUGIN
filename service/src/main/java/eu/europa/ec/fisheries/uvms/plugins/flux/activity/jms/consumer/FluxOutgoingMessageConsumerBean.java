@@ -184,7 +184,8 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                 Thread.sleep(1000);
                 waitingTimes--;
             } catch (InterruptedException ignored) {
-                log.error("thread interruption excpetion",ignored);
+                log.error("thread interruption exception",ignored);
+                Thread.currentThread().interrupt();
             }
         }
         BridgeConnectorPortType port = portInitiator.getPort();
