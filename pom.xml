@@ -37,6 +37,7 @@
         <jbossws.api.version>1.0.2.Final</jbossws.api.version>
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-FLUXACTIVITY-PLUGIN.git</scm.connection>
         <lombok.version>1.16.18</lombok.version>
+        <usm4uvms.version>${uvms.uvms4usm.version}</usm4uvms.version>
     </properties>
 
     <dependencies>

@@ -26,9 +26,16 @@
                             <groupId>${project.groupId}</groupId>  
                             <artifactId>${project.parent.artifactId}-service</artifactId>
                         </ejbModule>
+                        <jarModule>
+                            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+                            <artifactId>uvms-commons-message</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
                     </modules>
                     <skinnyWars>true</skinnyWars>
                     <filtering>true</filtering>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
                 </configuration>
             </plugin>
             <plugin>
@@ -48,6 +55,33 @@
             <artifactId>${project.parent.artifactId}-service</artifactId>
             <version>${project.version}</version>
             <type>ejb</type>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-message</artifactId>
+            <version>${uvms.commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
