@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>${project.parent.artifactId}-service</artifactId>
@@ -13,24 +14,58 @@
     </parent>
 
     <properties>
-        <application.name>${project.parent.artifactId}</application.name> 
-        <application.responseTopicName>PLUGIN_RESPONSE</application.responseTopicName> 
-        <application.groupid>${project.parent.groupId}</application.groupid> 
+        <application.name>${project.parent.artifactId}</application.name>
+        <application.responseTopicName>PLUGIN_RESPONSE</application.responseTopicName>
+        <application.groupid>${project.parent.groupId}</application.groupid>
         <application.version>${project.parent.version}</application.version>
         <application.logfile>${project.parent.artifactId}.log</application.logfile>
-        <application.logfile.message.pattern>%replace(%rEx){'[\r\n]+', '~~'}%nopex %n</application.logfile.message.pattern>
+        <application.logfile.message.pattern>%replace(%rEx){'[\r\n]+', '~~'}%nopex %n
+        </application.logfile.message.pattern>
         <provider.url>http-remoting://10.155.0.10:8180</provider.url>
         <security.principal.id>fluxq</security.principal.id>
         <security.principal.pwd>testpassword</security.principal.pwd>
-
     </properties>
 
     <profiles>
         <profile>
-            <id>multilineLog</id>
-            <properties>
-                <application.logfile.message.pattern>%n</application.logfile.message.pattern>
-            </properties>
+            <id>logging-default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <filtering>true</filtering>
+                        <directory>src/main/logging/default</directory>
+                        <targetPath>${project.build.outputDirectory}</targetPath>
+                        <includes>
+                            <include>logback.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>logging-cloud</id>
+            <build>
+                <resources>
+                    <resource>
+                        <filtering>true</filtering>
+                        <directory>src/main/logging/cloud</directory>
+                        <targetPath>${project.build.outputDirectory}</targetPath>
+                        <includes>
+                            <include>logback.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.j256.cloudwatchlogbackappender</groupId>
+                    <artifactId>cloudwatchlogbackappender</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
@@ -76,21 +111,16 @@
             </exclusions>
             <scope>provided</scope>
         </dependency>
-        <!-- Model dependencies -->
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.service.client</groupId>
             <artifactId>connector-bridge-client</artifactId>
             <version>${connector-bridge.client.version}</version>
         </dependency>
-        <!-- incoming messages from FLUX -->
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.service.client</groupId>
             <artifactId>bridge-connector-client</artifactId>
             <version>${bridge-connector.client.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -114,7 +144,7 @@
             <version>3.13.1</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <finalName>${project.name}-${project.version}</finalName>
         <plugins>
@@ -155,12 +185,12 @@
         <resources>
             <resource>
                 <filtering>true</filtering>
+                <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                     <include>*.xml</include>
                 </includes>
-                <directory>src/main/resources</directory>
             </resource>
         </resources>
     </build>
