@@ -74,6 +74,7 @@
                     <artifactId>jaxb-core</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
         <!-- Model dependencies -->
 
