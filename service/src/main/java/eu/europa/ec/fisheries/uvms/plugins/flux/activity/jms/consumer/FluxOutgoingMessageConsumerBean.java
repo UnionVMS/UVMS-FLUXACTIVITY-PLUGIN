@@ -92,6 +92,8 @@ public class FluxOutgoingMessageConsumerBean implements MessageListener {
                     break;
                 case SEND_FA_QUERY:
                     SetFLUXFAQueryRequest activityQueryRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetFLUXFAQueryRequest.class);
+                    activityQueryRequest.setResponse(activityQueryRequest.getResponse().replace("\n" +
+                            "        <manual>true</manual>",""));
                     sendActivityQueryToFlux(activityQueryRequest);
                     break;
                 case SET_CONFIG:
